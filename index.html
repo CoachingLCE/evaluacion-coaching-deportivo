@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   :root{
     --purple-1:#96198f;
@@ -427,17 +426,12 @@
 
 <script>
 /* =========================================================
-   CONFIGURACIÓN DE EMAILJS
-   Reemplazar estos 4 valores por los de tu cuenta EmailJS
-   (Ver instrucciones en el mensaje de chat / README)
+   ENVÍO DE MAILS
+   Los mails se envían a través de nuestra propia función
+   serverless en Vercel (/api/send-results), que usa Nodemailer
+   con la cuenta de Gmail configurada como variable de entorno.
 ========================================================= */
-const EMAILJS_CONFIG = {
-  publicKey:        "TU_PUBLIC_KEY",
-  serviceId:         "TU_SERVICE_ID",
-  templateEstudiante:"TU_TEMPLATE_ESTUDIANTE",
-  templateStaff:     "TU_TEMPLATE_STAFF"
-};
-const DESTINATARIOS_STAFF = ["info@institutoilce.com", "sofia.salgueiro@institutoilce.com"];
+const SEND_RESULTS_ENDPOINT = "/api/send-results";
 
 const EXAM_SECONDS = 600; // 10 minutos
 const PUNTOS_POR_PREGUNTA = 0.5;
@@ -815,59 +809,33 @@ function renderResults(score, total, passed){
    ENVÍO DE MAILS (EmailJS)
 ========================================================= */
 function sendEmails(score, total, passed){
-  const configured = EMAILJS_CONFIG.publicKey && !EMAILJS_CONFIG.publicKey.startsWith('TU_');
   const resultadoTexto = passed ? 'Aprobado' : 'No aprobado';
   const fecha = new Date().toLocaleDateString('es-AR');
+  const scoreTexto = score.toFixed(1).replace('.0','');
 
   const finalMsg = passed
-    ? `Gracias por completar tu evaluación final, ${student.nombre.split(' ')[0]}. ¡Aprobaste con ${score.toFixed(1).replace('.0','')} de ${total} puntos! Te enviamos un mail con el detalle. En breve vas a recibir tu certificación.`
-    : `Gracias por completar tu evaluación final, ${student.nombre.split(' ')[0]}. Obtuviste ${score.toFixed(1).replace('.0','')} de ${total} puntos, por debajo del mínimo para aprobar. Te enviamos un mail con el detalle y los próximos pasos.`;
+    ? `Gracias por completar tu evaluación final, ${student.nombre.split(' ')[0]}. ¡Aprobaste con ${scoreTexto} de ${total} puntos! Te enviamos un mail con el detalle. En breve vas a recibir tu certificación.`
+    : `Gracias por completar tu evaluación final, ${student.nombre.split(' ')[0]}. Obtuviste ${scoreTexto} de ${total} puntos, por debajo del mínimo para aprobar. Te enviamos un mail con el detalle y los próximos pasos.`;
   document.getElementById('sent-message').innerText = finalMsg;
 
-  if(!configured){
-    console.warn('EmailJS no está configurado todavía. Completá EMAILJS_CONFIG en el <script> para habilitar el envío real de mails.');
-    show('screen-sent');
-    return;
-  }
-
-  emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
-
-  const mensajeAlumno = passed
-    ? '¡Felicitaciones! Alcanzaste el puntaje mínimo para aprobar. En breve vas a recibir tu certificación por parte del equipo de Instituto ILCE.'
-    : 'No alcanzaste el puntaje mínimo para aprobar esta vez. Desde el equipo de Instituto ILCE nos vamos a contactar con vos para contarte los próximos pasos.';
-
-  const mensajeStaff = passed
-    ? 'Recordá gestionar la certificación correspondiente.'
-    : 'El estudiante no alcanzó el puntaje mínimo. Evaluar próximos pasos.';
-
-  const baseParams = {
-    student_name: student.nombre,
-    student_email: student.mail,
-    edicion: student.edicion,
-    score: score.toFixed(1).replace('.0',''),
-    total: total,
-    resultado: resultadoTexto,
-    fecha: fecha,
-    aprobado: passed ? 'si' : 'no'
-  };
-
-  // Mail al estudiante
-  emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateEstudiante, {
-    ...baseParams,
-    to_email: student.mail,
-    to_name: student.nombre,
-    mensaje_personalizado: mensajeAlumno
-  }).catch(err=>console.error('Error enviando mail al estudiante:', err));
-
-  // Mails al staff (info@ y sofia.salgueiro@)
-  DESTINATARIOS_STAFF.forEach(dest=>{
-    emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateStaff, {
-      ...baseParams,
-      to_email: dest,
-      to_name: dest.split('@')[0],
-      mensaje_personalizado: mensajeStaff
-    }).catch(err=>console.error('Error enviando mail a '+dest+':', err));
-  });
+  fetch(SEND_RESULTS_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      studentName: student.nombre,
+      studentEmail: student.mail,
+      edicion: student.edicion,
+      score: scoreTexto,
+      total: total,
+      resultado: resultadoTexto,
+      fecha: fecha
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if(!data.ok) console.error('El servidor no pudo enviar los mails:', data);
+  })
+  .catch(err => console.error('Error llamando a /api/send-results:', err));
 
   show('screen-sent');
 }
