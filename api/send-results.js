@@ -25,7 +25,7 @@ Instituto ILCE`
   };
 }
 
-function buildStaffEmail({ studentName, studentEmail, edicion, score, total, resultado, fecha }) {
+function buildStaffEmail({ studentName, studentEmail, edicion, score, total, resultado, fecha, duracion }) {
   return {
     subject: `Resultado evaluación · ${studentName} · Coaching Deportivo`,
     text:
@@ -36,6 +36,7 @@ Mail: ${studentEmail}
 Edición: ${edicion}
 Resultado: ${score} de ${total} puntos
 Estado: ${resultado}
+Tiempo utilizado: ${duracion || 'no registrado'}
 Fecha: ${fecha}`
   };
 }
@@ -46,7 +47,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const { studentName, studentEmail, edicion, score, total, resultado, fecha } = req.body || {};
+  const { studentName, studentEmail, edicion, score, total, resultado, fecha, duracion } = req.body || {};
 
   if (!studentName || !studentEmail || !edicion || score === undefined) {
     res.status(400).json({ error: 'Faltan datos obligatorios' });
@@ -62,7 +63,7 @@ module.exports = async function handler(req, res) {
   });
 
   const fromHeader = `"Instituto ILCE" <${process.env.GMAIL_USER}>`;
-  const payload = { studentName, studentEmail, edicion, score, total, resultado, fecha };
+  const payload = { studentName, studentEmail, edicion, score, total, resultado, fecha, duracion };
 
   try {
     const studentMsg = buildStudentEmail(payload);
