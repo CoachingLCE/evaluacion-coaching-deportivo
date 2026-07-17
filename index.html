@@ -768,10 +768,18 @@ function submitExam(){
   });
   const total = QUESTIONS.length * PUNTOS_POR_PREGUNTA;
   const passed = score >= PUNTAJE_APROBACION;
+  const segundosUsados = EXAM_SECONDS - Math.max(0, secondsLeft);
+  const duracionTexto = formatDuracion(segundosUsados);
 
   renderResults(score, total, passed);
-  sendEmails(score, total, passed);
+  sendEmails(score, total, passed, duracionTexto);
   show('screen-results');
+}
+
+function formatDuracion(totalSeconds){
+  const m = Math.floor(totalSeconds/60);
+  const s = totalSeconds%60;
+  return `${m} min ${String(s).padStart(2,'0')} seg`;
 }
 
 function renderResults(score, total, passed){
@@ -808,7 +816,7 @@ function renderResults(score, total, passed){
 /* =========================================================
    ENVÍO DE MAILS (EmailJS)
 ========================================================= */
-function sendEmails(score, total, passed){
+function sendEmails(score, total, passed, duracionTexto){
   const resultadoTexto = passed ? 'Aprobado' : 'No aprobado';
   const fecha = new Date().toLocaleDateString('es-AR');
   const scoreTexto = score.toFixed(1).replace('.0','');
@@ -828,7 +836,8 @@ function sendEmails(score, total, passed){
       score: scoreTexto,
       total: total,
       resultado: resultadoTexto,
-      fecha: fecha
+      fecha: fecha,
+      duracion: duracionTexto
     })
   })
   .then(r => r.json())
