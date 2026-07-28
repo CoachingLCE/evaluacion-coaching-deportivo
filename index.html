@@ -441,173 +441,185 @@ const PUNTAJE_APROBACION = 6;
    BANCO DE PREGUNTAS
 ========================================================= */
 const QUESTIONS = [
-{ situacion:"Tu coachee, un joven futbolista, comete un error en un partido importante y empieza a repetirse internamente: \"Soy un desastre, nunca debí estar aquí\", lo que afecta su concentración en las jugadas siguientes.",
-  pregunta:"¿Cuál sería la intervención más adecuada para ayudarlo a manejar esta interferencia mental?",
-  opciones:["Indicarle que ignore esos pensamientos y se concentre en el juego.",
-    "Sugerirle que se repita frases como \"No soy un desastre, soy el mejor\" para cambiar su ánimo.",
-    "Aplicar una rutina post-error que incluya reírse de sí mismo, una acción física y una respiración profunda para reencauzar su atención.",
-    "Recordarle sus errores pasados para que vea un patrón y aprenda de ellos."],
-  correcta:2,
-  justificacion:"El self-talk negativo afecta la toma de decisiones y ejecución. Una rutina post-error recomendada incluye humor para desdramatizar, una acción física para marcar un \"borrón y cuenta nueva\", y respiración profunda para relajar la mente y recuperar la concentración." },
+{ situacion:"Tu deportista, un joven futbolista, comete un error en un partido importante y empieza a repetirse internamente \"Soy un desastre, nunca debí estar acá\", afectando su concentración en las jugadas siguientes.",
+  pregunta:"¿Cuál rutina post-error sería más efectiva?",
+  opciones:["Aplicar una rutina que incluya reírse de sí mismo, una acción física breve y respiración profunda, para desdramatizar y reencauzar la atención.",
+    "Guiarlo a reemplazar el pensamiento negativo por una autoafirmación positiva (\"soy el mejor\"), instalando un diálogo interno más constructivo.",
+    "Trabajar una reestructuración cognitiva completa en el momento, analizando por qué se equivocó antes de que vuelva a jugar.",
+    "Sugerirle una pausa de respiración consciente, sin intervenir sobre el contenido del pensamiento, dejando que el error \"pase\"."],
+  correcta:0,
+  justificacion:"El self-talk negativo afecta la concentración y las decisiones. La estrategia recomendada no es reprimir ni sobrecompensar el pensamiento, sino aplicar una rutina breve (humor + acción física + respiración) que marque un corte real y reencauce la atención al presente." },
 
-{ situacion:"El equipo muestra comentarios irónicos y miradas de desaprobación hacia un compañero que \"no pone actitud\", generando un clima tenso y falta de pases.",
-  pregunta:"¿Cuál sería una intervención efectiva desde el coaching para abordar esta interferencia de \"falta de comunicación emocional y exclusión\"?",
-  opciones:["Realizar una reunión donde el entrenador señale directamente al jugador problemático.",
-    "Ignorar la situación, esperando que el conflicto se resuelva solo con el tiempo.",
-    "Implementar dinámicas de integración y trabajo sobre el reconocimiento mutuo, utilizando un sociograma para detectar redes de inclusión/exclusión.",
-    "Excluir al jugador señalado para mejorar el ambiente general del equipo."],
-  correcta:2,
-  justificacion:"Se sugieren dinámicas de integración, reconocimiento mutuo, uso de sociogramas y espacios de escucha y validación emocional." },
+{ situacion:"El equipo muestra comentarios irónicos y miradas de desaprobación hacia un compañero que \"no pone actitud\", generando un clima tenso y de exclusión.",
+  pregunta:"¿Qué intervención sería más efectiva?",
+  opciones:["Implementar dinámicas de integración y trabajar el reconocimiento mutuo, apoyándose en un sociograma para mapear redes de inclusión/exclusión.",
+    "Convocar una reunión grupal para poner en palabras la tensión, mediando entre las partes sin usar herramientas diagnósticas previas.",
+    "Trabajar individualmente con el jugador señalado para fortalecer su seguridad, sin intervenir sobre la dinámica grupal.",
+    "Proponer una actividad de team building genérica, esperando que la convivencia mejore el clima sin diagnosticar la causa puntual."],
+  correcta:0,
+  justificacion:"Ante señales de exclusión, conviene diagnosticar primero la dinámica grupal (por ejemplo con un sociograma) antes de intervenir, y trabajar el reconocimiento mutuo entre todos los integrantes, no solo mediar la tensión puntual." },
 
-{ situacion:"Un deportista joven tiene expectativas de éxito mucho más altas que su entrenador y sus padres, lo que genera presión y posible bloqueo.",
+{ situacion:"Un deportista joven tiene expectativas de éxito mucho más altas que su entorno, lo que genera presión y posible bloqueo.",
   pregunta:"Según el modelo de niveles de expectativas (Tipo C2), ¿qué acción debería priorizar el coach?",
-  opciones:["Convencer al deportista de bajar sus expectativas al nivel de su entorno.",
-    "Ignorar las expectativas del deportista.",
-    "Canalizar esa ambición para que no se transforme en presión o bloqueo, definiendo objetivos MARTE basados en resultados recientes y contexto.",
-    "Fomentar que el deportista cambie de entrenador y entorno."],
-  correcta:2,
-  justificacion:"En el caso C2, se debe canalizar la ambición y definir objetivos MARTE ajustados al contexto competitivo y desempeño reciente." },
+  opciones:["Canalizar esa ambición definiendo objetivos MARTE ajustados a resultados recientes y contexto competitivo.",
+    "Ajustar las expectativas del deportista al promedio del equipo, para equilibrar la presión grupal.",
+    "Sostener las expectativas actuales sin modificarlas, reforzando la confianza del deportista en su capacidad.",
+    "Redirigir el foco hacia el proceso y el disfrute, postergando la definición de objetivos de resultado."],
+  correcta:0,
+  justificacion:"En el caso C2 (expectativas propias más altas que el entorno), la clave es canalizar esa ambición en objetivos concretos y alcanzables (MARTE) ajustados al contexto reciente, en vez de bajarlas o dejarlas sin estructura." },
 
 { situacion:"La capitana de un equipo tiene un estilo autoritario que genera tensión y menor compromiso grupal.",
-  pregunta:"¿Qué intervención es clave para abordar esta interferencia?",
-  opciones:["Pedir a la capitana que deje de marcar errores y solo lo haga el entrenador.",
-    "Acompañar a la líder para revisar su estilo e impacto, activando feedback horizontal y liderazgo compartido o rotativo.",
-    "Sugerir cambiar de capitana.",
-    "Hacer una votación sobre si debe cambiar su estilo."],
-  correcta:1,
-  justificacion:"Se recomienda acompañar a la líder, activar feedback horizontal y dinámicas de liderazgo compartido o rotativo." },
+  pregunta:"¿Qué intervención es clave?",
+  opciones:["Acompañar a la líder a revisar su estilo e impacto, activando feedback horizontal y liderazgo compartido o rotativo.",
+    "Trabajar con la capitana técnicas de comunicación asertiva, manteniendo su rol de liderazgo único tal como está.",
+    "Facilitar un espacio de feedback grupal dirigido por el entrenador, sin modificar la estructura de liderazgo del equipo.",
+    "Rotar el rol de capitán entre distintos jugadores automáticamente, sin trabajar antes el estilo de la actual capitana."],
+  correcta:0,
+  justificacion:"Frente a un liderazgo autoritario, conviene trabajar con la líder sobre su estilo e impacto, abriendo espacio a feedback horizontal y modelos de liderazgo compartido, en vez de sostener el esquema actual o modificarlo sin trabajar antes con ella." },
 
 { situacion:"Una nadadora se distrae con pensamientos como \"¿Y si no gano?\" que afectan su rendimiento.",
-  pregunta:"¿Qué técnicas de autorregulación recomendarías?",
-  opciones:["Evitar pensar en la competencia hasta el último minuto.",
-    "Visualización centrada en técnica y sensaciones físicas + respiración consciente/mindfulness.",
-    "Concentrarse solo en el resultado final.",
-    "Ignorar los estímulos externos sin técnica específica."],
-  correcta:1,
-  justificacion:"Se recomiendan técnicas de mindfulness, respiración consciente, visualización sensorial guiada y anclaje físico." },
+  pregunta:"¿Qué técnica de autorregulación recomendarías?",
+  opciones:["Visualización centrada en la técnica y las sensaciones físicas, combinada con respiración consciente.",
+    "Visualización enfocada en el resultado final (ganar la carrera), para reforzar la motivación antes de competir.",
+    "Respiración consciente únicamente, sin trabajar visualización, para no sobrecargarla mentalmente.",
+    "Reestructuración cognitiva del pensamiento \"y si no gano\", sin incorporar herramientas corporales."],
+  correcta:0,
+  justificacion:"La autorregulación efectiva combina visualización centrada en el proceso (técnica y sensaciones) con herramientas corporales como la respiración consciente, en vez de enfocarse solo en el resultado o en una sola herramienta aislada." },
 
 { situacion:"Un equipo con buenos resultados muestra clima apagado y falta de conexión.",
   pregunta:"¿Cuál sería una estrategia clave?",
-  opciones:["Enfocarse solo en mejorar las tácticas.",
-    "Generar espacios emocionales para reforzar el disfrute y actividades fuera del ámbito competitivo.",
-    "Recordar constantemente los buenos resultados.",
-    "Hacer entrenamientos más exigentes."],
-  correcta:1,
-  justificacion:"Conectar con los valores, generar espacios de disfrute por el proceso y reforzar el vínculo humano." },
+  opciones:["Generar espacios emocionales que refuercen el disfrute, con actividades fuera del ámbito competitivo.",
+    "Realizar una reunión técnica para analizar qué está fallando en la conexión del equipo dentro de la cancha.",
+    "Sostener la rutina actual, dado que los resultados deportivos siguen siendo buenos.",
+    "Incrementar el volumen de entrenamiento físico para canalizar la energía del equipo."],
+  correcta:0,
+  justificacion:"Un equipo con buen resultado pero clima apagado necesita reconectar con el disfrute y el vínculo humano fuera de lo estrictamente competitivo, más que ajustar la técnica o mantener la rutina sin cambios." },
 
 { situacion:"El deportista muestra baja atención y confianza tras una lesión.",
-  pregunta:"¿Qué recomendación clave le darías?",
-  opciones:["Evitar pensar en la lesión y exigirse desde el primer día.",
-    "Negar la lesión para no sentirse limitado.",
-    "Aceptar lo ocurrido, establecer objetivos progresivos y registrar avances y logros.",
-    "Confiar en que la práctica física resolverá todo."],
-  correcta:2,
-  justificacion:"Aceptar, fijar objetivos a corto, mediano y largo plazo, y registrar avances y aprendizajes." },
+  pregunta:"¿Cuál sería la intervención más adecuada para acompañar esta etapa de recuperación?",
+  opciones:["Aceptar lo ocurrido, establecer objetivos progresivos y registrar avances y logros.",
+    "Enfocarse en recuperar cuanto antes el nivel previo a la lesión, sin detenerse en objetivos intermedios.",
+    "Evitar hablar de la lesión para no reforzar la inseguridad del deportista.",
+    "Fijar un único objetivo a largo plazo (la vuelta a la competencia), postergando el registro de avances menores."],
+  correcta:0,
+  justificacion:"Tras una lesión, conviene aceptar lo ocurrido y trabajar con objetivos progresivos, registrando avances concretos, en lugar de apurar el regreso al nivel previo o evitar hablar del tema." },
 
-{ situacion:"Alta puntuación en el test de creencias irracionales, Factor 2: \"Altas autoexpectativas\".",
-  pregunta:"¿Qué distorsión cognitiva es probable que presente?",
-  opciones:["Sesgo de falso consenso.","Efecto Halo.","Pensamiento dicotómico o catastrofismo.","Error de atribución."],
-  correcta:2,
-  justificacion:"Las altas autoexpectativas se vinculan con pensamiento dicotómico (todo o nada) y catastrofismo." },
+{ situacion:"Un deportista con alta puntuación en el Factor 2 del TCI (\"Altas autoexpectativas\") suele pensar \"si no gano, todo el esfuerzo no sirvió para nada\".",
+  pregunta:"¿Qué distorsión refleja este pensamiento y qué implica para la intervención?",
+  opciones:["Pensamiento dicotómico o catastrofismo: conviene trabajar matices entre el \"todo o nada\" y registrar logros parciales.",
+    "Sesgo de falso consenso: conviene mostrarle que otros deportistas piensan distinto para relativizar su exigencia.",
+    "Efecto halo: conviene señalar que un buen resultado no define el resto de sus cualidades como persona.",
+    "Error de atribución: conviene trabajar para que deje de atribuir los resultados a factores externos."],
+  correcta:0,
+  justificacion:"Las altas autoexpectativas suelen combinarse con pensamiento dicotómico o catastrofismo (todo o nada). Ahí es clave trabajar los matices entre el éxito total y el fracaso total, registrando logros parciales." },
 
 { situacion:"Un equipo con talento individual no logra consolidar juego colectivo.",
   pregunta:"¿Cómo abordar esta interferencia?",
-  opciones:["Aumentar entrenamientos técnicos individuales.",
-    "Diseñar objetivos compartidos orientados al proceso y observar patrones de comunicación.",
-    "Que los jugadores resuelvan solos sus problemas.",
-    "Fomentar competencia interna."],
-  correcta:1,
-  justificacion:"Trabajar la distinción entre grupo y equipo, diseñar objetivos compartidos, observar comunicación en cancha." },
+  opciones:["Diseñar objetivos compartidos orientados al proceso y observar los patrones de comunicación en cancha.",
+    "Aumentar los entrenamientos técnicos individuales, apostando a que el nivel personal termine arrastrando al equipo.",
+    "Fomentar competencia interna entre jugadores para elevar el nivel general del plantel.",
+    "Dejar que los jugadores resuelvan la dinámica grupal por su cuenta, dado que el nivel técnico ya es alto."],
+  correcta:0,
+  justificacion:"Cuando el talento individual no logra traducirse en juego colectivo, conviene diseñar objetivos compartidos orientados al proceso y observar los patrones reales de comunicación en cancha, en vez de apostar solo al nivel técnico individual." },
 
 { situacion:"Una corredora se angustia porque corre más por su público que por ella.",
   pregunta:"¿Qué enfoque ayudaría a superar esta dependencia?",
-  opciones:["Cerrar sus redes sociales.",
-    "Reconectar con sus valores personales y motivación intrínseca, diseñando un plan con momentos de disfrute.",
-    "Ignorar al público y enfocarse en ganar.",
-    "Publicar solo sus victorias para mantener buena imagen."],
-  correcta:1,
-  justificacion:"Trabajar con valores, reconectar con el \"para qué\" corre, recuperar motivación intrínseca y disfrute por el proceso." },
+  opciones:["Reconectar con sus valores personales y su motivación intrínseca, diseñando un plan con momentos de disfrute.",
+    "Trabajar estrategias para gestionar mejor la exposición pública, sin modificar el foco motivacional.",
+    "Sugerirle que compita en eventos con menos público, para reducir la fuente de presión externa.",
+    "Reforzar el reconocimiento externo con más presencia en redes, para que la validación no dependa solo de la carrera."],
+  correcta:0,
+  justificacion:"Cuando la motivación depende de la mirada externa, conviene reconectar con los valores propios y la motivación intrínseca, diseñando momentos de disfrute genuino, más que gestionar la exposición o reforzar la validación externa." },
 
 { situacion:"Escenario individual: racionalización de sensaciones incómodas.",
-  pregunta:"Desde el enfoque cognitivo del coaching, ¿qué es fundamental trabajar con el deportista en esta situación?",
-  opciones:["Animarle a ignorar las sensaciones, ya que son irrelevantes.",
-    "Fomentar la racionalización de estas sensaciones, explicando que son normales y no siempre predictivas de un mal rendimiento, y utilizar el diálogo interno para modularlas.",
-    "Sugerirle tomar medicación o suplementos para cambiar artificialmente esas sensaciones.",
-    "Recomendarle un descanso total previo a la competición para evitar cualquier sensación."],
-  correcta:1,
-  justificacion:"Las \"sensaciones incómodas\" son percepciones físicas que no afectan el rendimiento objetivamente, pero que el deportista puede sobrevalorar negativamente. El enfoque cognitivo busca modular estas sensaciones a través del diálogo interno y la racionalización, enfocándose en la imagen o el recuerdo de las soluciones, no de los errores." },
+  pregunta:"Desde el enfoque cognitivo, ¿qué es fundamental trabajar?",
+  opciones:["Fomentar la racionalización de estas sensaciones, explicando que son normales y no siempre predictivas de mal rendimiento, trabajando el diálogo interno para modularlas.",
+    "Ayudarlo a eliminar por completo esas sensaciones antes de competir, mediante técnicas de relajación profunda.",
+    "Sugerirle que las ignore activamente, enfocando toda su atención en el aspecto técnico.",
+    "Proponerle que analice en detalle el origen de esas sensaciones antes de cada entrenamiento, para anticiparlas."],
+  correcta:0,
+  justificacion:"Las sensaciones físicas incómodas no siempre predicen un mal rendimiento. El enfoque cognitivo busca racionalizarlas como normales y trabajar el diálogo interno para modularlas, en vez de eliminarlas, ignorarlas o sobreanalizarlas." },
 
 { situacion:"",
-  pregunta:"¿Cómo podrías aplicar la visualización o el entrenamiento mental de manera más efectiva, según la neurociencia aplicada al deporte?",
-  opciones:["Pedirle que vea videos de otros deportistas exitosos para que los imite.",
-    "Que imagine su actuación con toda la nitidez y detalle posible, desde sus propios ojos, poniendo en práctica la toma de decisiones y las situaciones más probables.",
-    "Aconsejarle que solo visualice el momento de ganar la competencia, sin detalles del proceso.",
-    "Indicarle que la visualización solo es útil para la relajación, no para la mejora técnica."],
-  correcta:1,
-  justificacion:"La visualización genera actividad neuronal similar a la ejecución real. Debe hacerse desde una perspectiva asociada (desde los ojos del coachee), con detalles y objetivos definidos." },
+  pregunta:"¿Cómo aplicar la visualización de manera más efectiva, según la neurociencia aplicada al deporte?",
+  opciones:["Que imagine su actuación con toda la nitidez posible, desde sus propios ojos, practicando la toma de decisiones y las situaciones más probables.",
+    "Que vea videos de otros deportistas exitosos, para incorporar por imitación los patrones de movimiento.",
+    "Que visualice solamente el momento de ganar la competencia, sin detenerse en los detalles del proceso.",
+    "Que utilice la visualización únicamente como herramienta de relajación previa, sin trabajar aspectos técnicos."],
+  correcta:0,
+  justificacion:"La visualización más efectiva es en primera persona (asociada), con el mayor detalle posible, poniendo en práctica decisiones reales — no por imitación de otros ni limitada solo al resultado final o a la relajación." },
 
 { situacion:"",
-  pregunta:"Al aplicar el ejercicio cognitivo-físico-conductual, ¿qué buscarías explorar para entender mejor esta interferencia?",
-  opciones:["Únicamente las excusas del deportista para justificar su bajo rendimiento.",
-    "La correlación entre sus pensamientos, sensaciones físicas y acciones antes y durante la actuación.",
-    "Sus logros pasados para contrastarlos con el fracaso actual.",
-    "La opinión de su entrenador sobre su rendimiento en esa competición."],
-  correcta:1,
-  justificacion:"Este ejercicio permite analizar cómo se relacionan pensamientos, sensaciones y acciones, tanto en momentos de buen rendimiento como en momentos negativos." },
+  pregunta:"Al aplicar el ejercicio cognitivo-físico-conductual, ¿qué buscarías explorar para entender mejor la interferencia?",
+  opciones:["La correlación entre sus pensamientos, sensaciones físicas y acciones, antes y durante la actuación.",
+    "Únicamente los pensamientos previos a la competencia, ya que son los que determinan el resultado final.",
+    "Las sensaciones físicas aisladas, dado que son el indicador más objetivo del estado del deportista.",
+    "Las acciones concretas durante la competencia, dejando en segundo plano el componente cognitivo-emocional."],
+  correcta:0,
+  justificacion:"Este ejercicio busca explorar la correlación entre pensamientos, sensaciones físicas y acciones, tanto antes como durante la actuación, en vez de aislar un solo componente." },
 
 { situacion:"",
-  pregunta:"¿Cuál de los siguientes pasos es fundamental en un diálogo socrático para guiar al coachee hacia sus propias conclusiones?",
-  opciones:["El coach le proporciona directamente la solución al problema del deportista.",
-    "El coach le pide al deportista que simplemente olvide lo sucedido y piense en el futuro.",
-    "El coach habla la mayor parte del tiempo, compartiendo su propia experiencia.",
-    "El coach cuestiona la respuesta inicial del coachee, generando incomodidad y confusión, para luego establecer conclusiones desde lo general a lo específico, hasta que el coachee obtenga sus propias conclusiones."],
-  correcta:3,
-  justificacion:"El diálogo socrático parte de preguntas que provocan reflexión, confusión productiva y progresiva elaboración de ideas propias." },
+  pregunta:"¿Cuál de los siguientes pasos es fundamental en un diálogo socrático para guiar al deportista hacia sus propias conclusiones?",
+  opciones:["El coach cuestiona la respuesta inicial del deportista, generando incomodidad productiva, y avanza de lo general a lo específico hasta que arribe a sus propias conclusiones.",
+    "El coach ofrece varias alternativas de solución y pide al deportista que elija la que más resuene con su forma de pensar.",
+    "El coach comparte su propia experiencia como referencia, para que el deportista la adapte a su situación.",
+    "El coach formula una única pregunta abierta inicial y espera en silencio a que el deportista llegue solo a una conclusión."],
+  correcta:0,
+  justificacion:"El diálogo socrático parte de cuestionar la respuesta inicial del deportista para generar una incomodidad productiva, y avanza de lo general a lo específico hasta que él mismo arriba a sus propias conclusiones — no de dar alternativas ni compartir experiencia propia." },
 
-{ situacion:"",
-  pregunta:"Si tu coachee desea gustar a todos y le importa tener éxito en todo, ¿qué factores del Test de Creencias Irracionales Abreviado (TCI) se reflejan?",
-  opciones:["Perfeccionismo y Evitación de problemas.",
-    "Necesidad de aprobación por parte de los demás y Altas autoexpectativas.",
-    "Culpabilización e Indefensión ante el cambio.",
-    "Control emocional y Dependencia."],
-  correcta:1,
-  justificacion:"Querer agradar a todos refleja necesidad de aprobación por parte de los demás, y buscar éxito en todo refleja altas autoexpectativas: ambos son factores del TCI." },
+{ situacion:"Tu deportista necesita gustarle a todos y le importa tener éxito en todo lo que hace.",
+  pregunta:"¿Qué factores del TCI se reflejan, y qué implica para el trabajo del coach?",
+  opciones:["Necesidad de aprobación por parte de los demás y Altas autoexpectativas: conviene trabajar la validación externa y flexibilizar metas.",
+    "Perfeccionismo y Evitación de problemas: conviene trabajar la tolerancia al error y evitar la postergación de decisiones.",
+    "Culpabilización e Indefensión ante el cambio: conviene trabajar la autoexigencia retrospectiva y la apertura a nuevas estrategias.",
+    "Control emocional y Dependencia: conviene trabajar la autonomía emocional y la regulación de impulsos."],
+  correcta:0,
+  justificacion:"Querer gustarle a todos y tener éxito en todo refleja necesidad de aprobación y altas autoexpectativas (factores del TCI). El trabajo pasa por relativizar la validación externa y flexibilizar las metas." },
 
-{ situacion:"",
-  pregunta:"Si tu coachee duda de sí mismo y eso afecta su desempeño, ¿qué escala del IPED sería clave trabajar?",
-  opciones:["Control visuoimaginario.","Nivel motivacional.","Autoconfianza.","Control actitudinal.","Control emocional y Dependencia."],
-  correcta:2,
-  justificacion:"La autoconfianza se define como el grado de confianza en uno mismo en que logrará el objetivo que se proponga. Dudar de uno mismo indica baja autoconfianza, una de las escalas del IPED." },
+{ situacion:"Tu deportista duda de sí mismo y eso afecta su desempeño.",
+  pregunta:"¿Qué escala del IPED sería clave trabajar, y con qué objetivo?",
+  opciones:["Autoconfianza: fortalecer el grado de convicción en lograr los objetivos propuestos.",
+    "Control actitudinal: fortalecer la capacidad de mantener la concentración ante distracciones externas.",
+    "Nivel motivacional: fortalecer el impulso y la energía dedicados a la práctica deportiva.",
+    "Control visuoimaginario: fortalecer la capacidad de generar imágenes mentales vívidas y controladas."],
+  correcta:0,
+  justificacion:"Dudar de uno mismo indica baja autoconfianza, una de las escalas del IPED. El trabajo apunta a fortalecer la convicción de poder lograr los objetivos propuestos." },
 
-{ situacion:"",
-  pregunta:"¿Qué herramienta se utiliza para mapear relaciones internas y cohesión grupal en un equipo?",
-  opciones:["IPED","TCI","Sociograma","IES"],
-  correcta:2,
-  justificacion:"El sociograma, desarrollado por Jacob Levy Moreno, es una herramienta centrada en la valoración de variables relacionales como la cohesión grupal. Permite identificar líderes informales y mejorar la cohesión del grupo." },
+{ situacion:"Como coach, querés identificar líderes informales y detectar posibles redes de exclusión dentro de un plantel.",
+  pregunta:"¿Qué herramienta resulta más adecuada?",
+  opciones:["Sociograma: permite mapear relaciones internas y cohesión grupal, identificando afinidades y conflictos latentes.",
+    "IPED: permite valorar fortalezas y debilidades del perfil psicológico individual de cada deportista.",
+    "TCI: permite identificar creencias irracionales que afectan el rendimiento de cada jugador.",
+    "IES: permite evaluar el estado emocional puntual de un deportista antes de una competencia."],
+  correcta:0,
+  justificacion:"El sociograma es la herramienta indicada para mapear relaciones internas, cohesión grupal y detectar líderes informales o redes de exclusión dentro de un plantel." },
 
-{ situacion:"",
-  pregunta:"Si el deportista tiene expectativas de éxito menores que las de su entorno, ¿qué debe trabajar el coach (tipo C1)?",
-  opciones:["Aumentar la presión.","Trabajar motivación, autoestima y autoconfianza.","Ignorar expectativas externas.","Basarse solo en resultados anteriores."],
-  correcta:1,
-  justificacion:"Cuando las expectativas propias son menores que las del entorno (C1), el foco del coach debe estar en fortalecer motivación, autoestima y autoconfianza del deportista." },
+{ situacion:"El deportista tiene expectativas de éxito menores que las de su entorno.",
+  pregunta:"¿Qué debe trabajar el coach (tipo C1)?",
+  opciones:["Trabajar motivación, autoestima y autoconfianza, para que se anime a elevar su propio nivel de exigencia.",
+    "Bajar las expectativas del entorno (familia, entrenador) para igualarlas a las del deportista.",
+    "Aumentar la presión externa, para forzarlo a alcanzar el nivel que su entorno espera.",
+    "Enfocar el trabajo únicamente en resultados de competencias anteriores, dejando de lado lo motivacional."],
+  correcta:0,
+  justificacion:"En el caso C1 (expectativas propias menores que las del entorno), el foco del coach debe estar en fortalecer motivación, autoestima y autoconfianza, para que el deportista se anime a elevar su propio nivel de exigencia." },
 
-{ situacion:"Tu coachee, Lucas, un arquero, comete errores y recibe críticas, desarrollando el pensamiento \"¿No puedo fallar otra vez?\".",
+{ situacion:"Lucas, un arquero, comete errores y recibe críticas, desarrollando el pensamiento \"¿No puedo fallar otra vez?\".",
   pregunta:"¿Qué estrategia principal debería aplicar el coach para reconstruir su confianza?",
-  opciones:["Exigirle que entrene más horas para eliminar la posibilidad de error.",
-    "Realizar sesiones de autocrítica profunda para identificar sus fallas.",
-    "Implementar ejercicios de reformulación de creencias limitantes y visualización positiva para redefinir el error como aprendizaje.",
-    "Cambiarle de posición en el equipo para reducir la presión."],
-  correcta:2,
-  justificacion:"Las estrategias efectivas incluyen trabajar creencias limitantes, reformular el diálogo interno, usar visualización positiva y redefinir el error como parte del aprendizaje. También se recomienda una bitácora de logros para reconectar con fortalezas personales." },
+  opciones:["Implementar ejercicios de reformulación de creencias limitantes y visualización positiva, para redefinir el error como aprendizaje.",
+    "Realizar sesiones de autocrítica profunda con el arquero, para que identifique con precisión cada una de sus fallas técnicas.",
+    "Exigirle más horas de entrenamiento específico de atajadas, para reducir estadísticamente la posibilidad de error.",
+    "Sugerirle un cambio de posición dentro del equipo, para aliviar la presión asociada al puesto de arquero."],
+  correcta:0,
+  justificacion:"Para reconstruir la confianza tras errores repetidos, conviene trabajar la reformulación de creencias limitantes y usar visualización positiva, redefiniendo el error como parte del aprendizaje." },
 
-{ situacion:"El equipo en el que estás trabajando tiene excelentes individualidades en vóley pero falla en la coordinación y comunicación en partidos clave.",
-  pregunta:"¿Qué enfoque principal debería adoptar el coach para mejorar el rendimiento colectivo?",
-  opciones:["Reforzar la importancia de las habilidades individuales para potenciar el talento de cada uno.",
-    "Realizar entrenamientos de castigo cuando no logran comunicarse en la cancha.",
-    "Diseñar objetivos compartidos orientados al proceso y trabajar la distinción entre \"grupo\" y \"equipo\".",
-    "Ignorar los problemas de comunicación, esperando que se resuelvan con más experiencia."],
-  correcta:2,
-  justificacion:"En casos de \"individualismo funcional\", es clave construir un equipo verdadero mediante objetivos compartidos, foco en lo colectivo y distinciones claras entre grupo y equipo." }
+{ situacion:"El equipo en el que estás trabajando tiene excelentes individualidades en vóley pero falla la coordinación y comunicación en partidos clave.",
+  pregunta:"¿Qué enfoque principal debería adoptar el coach?",
+  opciones:["Diseñar objetivos compartidos orientados al proceso, trabajando la distinción entre \"grupo\" y \"equipo\".",
+    "Reforzar la importancia de las habilidades individuales, confiando en que el talento de cada jugador potencie al conjunto.",
+    "Realizar entrenamientos de exigencia física adicional cuando el equipo falla en comunicarse durante el partido.",
+    "Sostener la formación actual sin intervenir, dado que las individualidades ya garantizan un nivel competitivo alto."],
+  correcta:0,
+  justificacion:"En casos de individualismo funcional, conviene diseñar objetivos compartidos orientados al proceso y trabajar la distinción entre \"grupo\" y \"equipo\", más que reforzar el talento individual o sostener la formación sin intervenir." }
 ];
 
 /* =========================================================
@@ -770,10 +782,31 @@ function submitExam(){
   const passed = score >= PUNTAJE_APROBACION;
   const segundosUsados = EXAM_SECONDS - Math.max(0, secondsLeft);
   const duracionTexto = formatDuracion(segundosUsados);
+  const detalle = buildDetalleRespuestas();
 
   renderResults(score, total, passed);
-  sendEmails(score, total, passed, duracionTexto);
+  sendEmails(score, total, passed, duracionTexto, detalle);
   show('screen-results');
+}
+
+function buildDetalleRespuestas(){
+  // Genera p1..p20 en el orden ORIGINAL del banco de preguntas
+  // (no en el orden aleatorio en que se le mostraron al estudiante),
+  // para que las columnas de la planilla sean siempre consistentes.
+  const detalle = {};
+  QUESTIONS.forEach((q, i)=>{
+    const userIdx = answers[i];
+    let valor;
+    if(userIdx === undefined){
+      valor = 'Sin responder';
+    } else if(userIdx === q.correcta){
+      valor = 'Correcta';
+    } else {
+      valor = `Incorrecta (eligió: ${q.opciones[userIdx]})`;
+    }
+    detalle['p' + (i+1)] = valor;
+  });
+  return detalle;
 }
 
 function formatDuracion(totalSeconds){
@@ -816,7 +849,7 @@ function renderResults(score, total, passed){
 /* =========================================================
    ENVÍO DE MAILS (EmailJS)
 ========================================================= */
-function sendEmails(score, total, passed, duracionTexto){
+function sendEmails(score, total, passed, duracionTexto, detalle){
   const resultadoTexto = passed ? 'Aprobado' : 'No aprobado';
   const fecha = new Date().toLocaleDateString('es-AR');
   const scoreTexto = score.toFixed(1).replace('.0','');
@@ -837,7 +870,8 @@ function sendEmails(score, total, passed, duracionTexto){
       total: total,
       resultado: resultadoTexto,
       fecha: fecha,
-      duracion: duracionTexto
+      duracion: duracionTexto,
+      detalle: detalle
     })
   })
   .then(r => r.json())
