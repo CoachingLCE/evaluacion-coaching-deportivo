@@ -47,7 +47,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const { studentName, studentEmail, edicion, score, total, resultado, fecha, duracion } = req.body || {};
+  const { studentName, studentEmail, edicion, score, total, resultado, fecha, duracion, detalle } = req.body || {};
 
   if (!studentName || !studentEmail || !edicion || score === undefined) {
     res.status(400).json({ error: 'Faltan datos obligatorios' });
@@ -82,6 +82,19 @@ module.exports = async function handler(req, res) {
         subject: staffMsg.subject,
         text: staffMsg.text
       });
+    }
+
+    // Guardar el registro en Google Sheets (no bloquea la respuesta si falla)
+    if (process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      try {
+        await fetch(process.env.GOOGLE_SHEETS_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...payload, ...(detalle || {}) })
+        });
+      } catch (sheetsErr) {
+        console.error('Error guardando en Google Sheets:', sheetsErr);
+      }
     }
 
     res.status(200).json({ ok: true });
