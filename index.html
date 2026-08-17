@@ -282,6 +282,16 @@
     word-break:break-word;
   }
 
+  #admin-table th, #admin-table td{
+    padding:8px 10px;
+    border-bottom:1px solid #eef1f2;
+    white-space:nowrap;
+  }
+  #admin-table th{color:var(--muted); font-weight:700; text-transform:uppercase; font-size:11.5px; letter-spacing:0.5px;}
+  #admin-table tr:hover td{background:#f7f9fa;}
+  .pill-aprobado{background:var(--success-bg); color:var(--success); padding:3px 10px; border-radius:20px; font-weight:700; font-size:12px;}
+  .pill-no-aprobado{background:var(--danger-bg); color:var(--danger); padding:3px 10px; border-radius:20px; font-weight:700; font-size:12px;}
+
   .review-item{
     border:1.5px solid #e4e8eb;
     border-radius:12px;
@@ -333,6 +343,44 @@
     <div class="brand-text">
       <div class="inst">INSTITUTO</div>
       <div class="name">ILCE</div>
+    </div>
+  </div>
+
+  <!-- ============ ADMIN: PANEL (viewer + admin) ============ -->
+  <div class="screen" id="screen-admin-panel">
+    <div class="eyebrow">Panel interno</div>
+    <h1 class="page-title">Evaluaciones rendidas</h1>
+    <div class="card" style="overflow-x:auto;">
+      <div id="admin-status" style="margin-bottom:14px; color:var(--muted); font-size:14px;"></div>
+      <table id="admin-table" style="width:100%; border-collapse:collapse; font-size:13.5px; display:none;">
+        <thead>
+          <tr id="admin-table-head" style="text-align:left; border-bottom:2px solid #e4e8eb;"></tr>
+        </thead>
+        <tbody id="admin-table-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Solo visible si el rol es admin -->
+    <div class="card" id="access-manager-card" style="display:none;">
+      <h2 style="font-size:19px; color:var(--dark); margin:0 0 14px;">Gestionar accesos</h2>
+
+      <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin-bottom:18px;">
+        <div style="flex:1; min-width:200px;">
+          <label for="in-new-access-mail" style="margin-top:0;">Mail a agregar</label>
+          <input type="email" id="in-new-access-mail" placeholder="persona@mail.com">
+        </div>
+        <div>
+          <label for="in-new-access-rol">Rol</label>
+          <select id="in-new-access-rol" style="padding:13px 14px; border:2px solid #dfe4e8; border-radius:10px; font-family:'Dosis', sans-serif; font-size:16px; font-weight:500; background:#fbfcfd;">
+            <option value="viewer">Viewer (solo ver)</option>
+            <option value="admin">Admin (ver y gestionar)</option>
+          </select>
+        </div>
+        <button class="btn" id="btn-add-access" style="width:auto; margin-top:0; padding:13px 22px;">Dar acceso</button>
+      </div>
+      <div class="field-error" id="err-access" style="display:none;"></div>
+
+      <div id="access-list"></div>
     </div>
   </div>
 
@@ -675,26 +723,216 @@ function escapeHtml(str){
 }
 
 /* =========================================================
+   PANEL DE ADMIN (por mail con acceso, no por URL/contraseña)
+========================================================= */
+let currentAdminMail = '';
+let currentAdminRole = null;
+
+function renderAdminTable(rows){
+  const statusBox = document.getElementById('admin-status');
+  const table = document.getElementById('admin-table');
+  const head = document.getElementById('admin-table-head');
+  const body = document.getElementById('admin-table-body');
+
+  if(!rows || rows.length === 0){
+    statusBox.innerText = 'Todavía no hay evaluaciones registradas.';
+    table.style.display = 'none';
+    return;
+  }
+
+  statusBox.innerText = `${rows.length} evaluación(es) registrada(s).`;
+  table.style.display = 'table';
+
+  // Encabezados: mostramos solo las columnas resumen, no las 20 preguntas (para no saturar)
+  const columnasResumen = ['Fecha','Nombre','Mail','Edición','Puntaje','Total','Resultado','Duración'];
+  head.innerHTML = columnasResumen.map(c => `<th>${escapeHtml(c)}</th>`).join('');
+
+  body.innerHTML = rows.map(row => {
+    const celdas = columnasResumen.map(col => {
+      if(col === 'Resultado'){
+        const esAprobado = String(row[col]).toLowerCase().includes('aprobado') && !String(row[col]).toLowerCase().includes('no aprobado');
+        const clase = esAprobado ? 'pill-aprobado' : 'pill-no-aprobado';
+        return `<td><span class="${clase}">${escapeHtml(String(row[col] ?? ''))}</span></td>`;
+      }
+      if(col === 'Fecha'){
+        const f = row[col] ? new Date(row[col]) : null;
+        const texto = f && !isNaN(f) ? f.toLocaleString('es-AR') : String(row[col] ?? '');
+        return `<td>${escapeHtml(texto)}</td>`;
+      }
+      return `<td>${escapeHtml(String(row[col] ?? ''))}</td>`;
+    }).join('');
+    return `<tr>${celdas}</tr>`;
+  }).join('');
+}
+
+function cargarPanelAdmin(){
+  fetch('/api/get-responses', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mail: currentAdminMail })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if(!data.ok){
+      document.getElementById('admin-status').innerText = 'Error: ' + data.error;
+      return;
+    }
+    renderAdminTable(data.rows);
+    if(currentAdminRole === 'admin'){
+      document.getElementById('access-manager-card').style.display = 'block';
+      cargarListaAccesos();
+    }
+  })
+  .catch(err => {
+    document.getElementById('admin-status').innerText = 'Error de conexión al traer los resultados.';
+    console.error(err);
+  });
+}
+
+function cargarListaAccesos(){
+  fetch('/api/manage-access', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requesterMail: currentAdminMail, action: 'list' })
+  })
+  .then(r => r.json())
+  .then(data => {
+    const listBox = document.getElementById('access-list');
+    if(!data.ok){
+      listBox.innerHTML = `<p style="color:var(--danger); font-size:14px;">Error: ${escapeHtml(data.error || '')}</p>`;
+      return;
+    }
+    if(!data.accesos || data.accesos.length === 0){
+      listBox.innerHTML = '<p style="color:var(--muted); font-size:14px;">No hay accesos cargados todavía.</p>';
+      return;
+    }
+    listBox.innerHTML = data.accesos.map(a => `
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eef1f2;">
+        <div>
+          <span style="font-weight:600;">${escapeHtml(a.mail)}</span>
+          <span class="${a.rol === 'admin' ? 'pill-aprobado' : 'pill-no-aprobado'}" style="margin-left:8px; background:${a.rol === 'admin' ? 'rgba(150,25,143,0.1)' : '#eef1f2'}; color:${a.rol === 'admin' ? 'var(--purple-2)' : 'var(--muted)'};">${escapeHtml(a.rol)}</span>
+        </div>
+        <button class="btn secondary" style="width:auto; margin-top:0; padding:8px 16px; font-size:14px;" onclick="quitarAccesoUI('${escapeHtml(a.mail)}')">Quitar</button>
+      </div>
+    `).join('');
+  })
+  .catch(err => console.error(err));
+}
+
+function quitarAccesoUI(mail){
+  if(!confirm(`¿Quitar el acceso de ${mail}?`)) return;
+  fetch('/api/manage-access', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requesterMail: currentAdminMail, action: 'remove', mail })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if(!data.ok){
+      alert('Error: ' + data.error);
+      return;
+    }
+    cargarListaAccesos();
+  })
+  .catch(err => console.error(err));
+}
+
+document.getElementById('btn-add-access').addEventListener('click', ()=>{
+  const mail = document.getElementById('in-new-access-mail').value.trim();
+  const rol = document.getElementById('in-new-access-rol').value;
+  const errBox = document.getElementById('err-access');
+  errBox.style.display = 'none';
+
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){
+    errBox.innerText = 'Ingresá un mail válido.';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  fetch('/api/manage-access', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requesterMail: currentAdminMail, action: 'add', mail, rol })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if(!data.ok){
+      errBox.innerText = 'Error: ' + data.error;
+      errBox.style.display = 'block';
+      return;
+    }
+    document.getElementById('in-new-access-mail').value = '';
+    cargarListaAccesos();
+  })
+  .catch(err => {
+    errBox.innerText = 'Error de conexión.';
+    errBox.style.display = 'block';
+    console.error(err);
+  });
+});
+
+/* =========================================================
    LOGIN
 ========================================================= */
 document.getElementById('btn-login').addEventListener('click', ()=>{
   const nombre = document.getElementById('in-nombre').value.trim();
   const mail = document.getElementById('in-mail').value.trim();
   const edicion = document.getElementById('in-edicion').value.trim();
-  let ok = true;
-
   const okMail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail);
-  const okEdicion = /^\d+$/.test(edicion);
 
-  document.getElementById('err-nombre').style.display = nombre ? 'none' : 'block';
   document.getElementById('err-mail').style.display = okMail ? 'none' : 'block';
-  document.getElementById('err-edicion').style.display = okEdicion ? 'none' : 'block';
+  if(!okMail) return;
 
-  if(!nombre || !okMail || !okEdicion) return;
+  const btn = document.getElementById('btn-login');
+  const textoOriginal = btn.innerText;
+  btn.disabled = true;
+  btn.innerText = 'Verificando...';
 
-  student = { nombre, mail, edicion };
-  document.getElementById('intro-nombre').innerText = nombre.split(' ')[0];
-  show('screen-intro');
+  fetch('/api/check-access', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mail })
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.disabled = false;
+    btn.innerText = textoOriginal;
+
+    const role = data.ok ? data.role : null;
+
+    if(role === 'admin' || role === 'viewer'){
+      currentAdminMail = mail;
+      currentAdminRole = role;
+      show('screen-admin-panel');
+      cargarPanelAdmin();
+      return;
+    }
+
+    // Flujo normal de estudiante: ahora sí validamos nombre y edición
+    const okEdicion = /^\d+$/.test(edicion);
+    document.getElementById('err-nombre').style.display = nombre ? 'none' : 'block';
+    document.getElementById('err-edicion').style.display = okEdicion ? 'none' : 'block';
+    if(!nombre || !okEdicion) return;
+
+    student = { nombre, mail, edicion };
+    document.getElementById('intro-nombre').innerText = nombre.split(' ')[0];
+    show('screen-intro');
+  })
+  .catch(err => {
+    // Si falla el chequeo de acceso, seguimos como estudiante normal
+    console.error('Error chequeando acceso:', err);
+    btn.disabled = false;
+    btn.innerText = textoOriginal;
+
+    const okEdicion = /^\d+$/.test(edicion);
+    document.getElementById('err-nombre').style.display = nombre ? 'none' : 'block';
+    document.getElementById('err-edicion').style.display = okEdicion ? 'none' : 'block';
+    if(!nombre || !okEdicion) return;
+
+    student = { nombre, mail, edicion };
+    document.getElementById('intro-nombre').innerText = nombre.split(' ')[0];
+    show('screen-intro');
+  });
 });
 
 /* =========================================================
