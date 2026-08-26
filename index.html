@@ -300,6 +300,29 @@
   @keyframes spin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
 
   /* ---------- Panel interno: tarjetas resumen ---------- */
+  /* ---------- Panel interno: tarjeta info plegable ---------- */
+  .info-card{padding:16px 20px; margin-bottom:16px;}
+  .info-toggle{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:none;
+    border:none;
+    padding:0;
+    cursor:pointer;
+    font-family:'Dosis', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    color:var(--purple-2);
+  }
+  .info-toggle-icon{transition:transform .2s ease; font-size:14px; color:var(--muted);}
+  .info-toggle.open .info-toggle-icon{transform:rotate(180deg);}
+  .info-content{margin-top:14px; padding-top:14px; border-top:1px solid #eef1f2;}
+  .info-list{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:8px;}
+  .info-list li{font-size:14px; color:var(--text); line-height:1.5;}
+  .info-list b{color:var(--dark);}
+
   .summary-cards{
     display:grid;
     grid-template-columns:repeat(4, 1fr);
@@ -452,6 +475,24 @@
       <button class="btn-refresh" id="btn-refresh-admin" type="button">
         <span class="btn-refresh-icon">⟳</span> Actualizar
       </button>
+    </div>
+
+    <div class="card info-card">
+      <button class="info-toggle" id="btn-toggle-info" type="button">
+        <span>¿Cómo funciona la habilitación de intentos?</span>
+        <span class="info-toggle-icon" id="info-toggle-icon">▾</span>
+      </button>
+      <div class="info-content" id="info-content" style="display:none;">
+        <ul class="info-list">
+          <li><b>1er intento:</b> libre para cualquier estudiante que entre por primera vez con su mail.</li>
+          <li><b>No aprobó (intento 1):</b> queda bloqueado hasta que pasen 3 días desde ese intento. El sistema calcula automáticamente cuántos días le faltan y se lo muestra.</li>
+          <li><b>Pasaron los 3 días:</b> se habilita el 2do intento solo, sin que nadie tenga que hacer nada manual.</li>
+          <li><b>2do intento aprobado:</b> sigue el flujo normal de certificación.</li>
+          <li><b>2do intento no aprobado:</b> queda bloqueado y aparece en la sección "Pendientes de habilitar 3er intento" de este panel.</li>
+          <li><b>3er intento:</b> se cobra manualmente por Mercado Pago fuera de la app. Cuando se confirma el pago, un admin toca "Marcar como pagado" y se habilita el intento.</li>
+          <li><b>3er intento no aprobado:</b> el estudiante queda sin más intentos disponibles.</li>
+        </ul>
+      </div>
     </div>
 
     <div class="summary-cards" id="summary-cards" style="display:none;">
@@ -1101,6 +1142,13 @@ function quitarAccesoUI(mail){
   })
   .catch(err => console.error(err));
 }
+
+document.getElementById('btn-toggle-info').addEventListener('click', function(){
+  const content = document.getElementById('info-content');
+  const abierto = content.style.display !== 'none';
+  content.style.display = abierto ? 'none' : 'block';
+  this.classList.toggle('open', !abierto);
+});
 
 document.getElementById('btn-refresh-admin').addEventListener('click', function(){
   const btn = this;
