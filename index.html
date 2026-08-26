@@ -261,8 +261,112 @@
     font-size:15px;
     letter-spacing:0.5px;
   }
-  .badge.pass{background:var(--success-bg); color:var(--success);}
-  .badge.fail{background:var(--danger-bg); color:var(--danger);}
+  .pill-aprobado{background:var(--success-bg); color:var(--success); padding:3px 10px; border-radius:20px; font-weight:700; font-size:12px;}
+  .pill-no-aprobado{background:var(--danger-bg); color:var(--danger); padding:3px 10px; border-radius:20px; font-weight:700; font-size:12px;}
+
+  /* ---------- Panel interno: header ---------- */
+  .admin-header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+  .admin-header .eyebrow{text-align:left; margin-bottom:4px;}
+  .admin-header .page-title{text-align:left; margin-bottom:6px;}
+  .admin-subtitle{color:var(--muted); font-size:14.5px; margin:0;}
+  .btn-refresh{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    background:var(--card);
+    border:1.5px solid #e4e8eb;
+    color:var(--dark);
+    font-family:'Dosis', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    padding:10px 18px;
+    border-radius:9px;
+    cursor:pointer;
+    transition:border-color .15s, background .15s;
+    flex-shrink:0;
+  }
+  .btn-refresh:hover{border-color:var(--teal-1); background:#f7fbfc;}
+  .btn-refresh:disabled{opacity:0.6; cursor:not-allowed;}
+  .btn-refresh-icon{display:inline-block; transition:transform .5s ease;}
+  .btn-refresh.loading .btn-refresh-icon{animation:spin 0.8s linear infinite;}
+  @keyframes spin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+
+  /* ---------- Panel interno: tarjetas resumen ---------- */
+  .summary-cards{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:12px;
+    margin-bottom:20px;
+  }
+  @media (max-width:620px){ .summary-cards{grid-template-columns:repeat(2, 1fr);} }
+  .summary-card{
+    background:var(--card);
+    border:1px solid #eef1f2;
+    border-radius:12px;
+    padding:16px 18px;
+    box-shadow:0 2px 8px rgba(1,35,63,0.04);
+  }
+  .summary-card .label{font-size:12.5px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:6px;}
+  .summary-card .value{font-size:26px; font-weight:800; color:var(--dark);}
+  .summary-card.aprobados .value{color:var(--success);}
+  .summary-card.no-aprobados .value{color:var(--danger);}
+
+  /* ---------- Panel interno: tabla ---------- */
+  .admin-table-card{padding:22px; overflow:visible;}
+  .admin-status{margin-bottom:14px; color:var(--muted); font-size:14px;}
+  .table-scroll{max-height:560px; overflow-y:auto; overflow-x:auto; border-radius:10px;}
+  .admin-table{width:100%; border-collapse:separate; border-spacing:0; font-size:13.5px;}
+  .admin-table thead th{
+    position:sticky;
+    top:0;
+    background:var(--card);
+    color:var(--muted);
+    font-weight:700;
+    text-transform:uppercase;
+    font-size:11px;
+    letter-spacing:0.5px;
+    text-align:left;
+    padding:10px 14px;
+    border-bottom:1.5px solid #eef1f2;
+    white-space:nowrap;
+    z-index:1;
+  }
+  .admin-table tbody td{
+    padding:13px 14px;
+    border-bottom:1px solid #f3f5f6;
+    white-space:nowrap;
+    color:var(--text);
+  }
+  .admin-table tbody tr:last-child td{border-bottom:none;}
+  .admin-table tbody tr:hover td{background:#f9fafb;}
+  .cell-center{text-align:center;}
+  .cell-score{text-align:center; line-height:1.25;}
+  .cell-score .score-main{font-weight:700; color:var(--dark); font-size:14px;}
+  .cell-score .score-pct{font-size:11.5px; color:var(--muted); font-weight:500;}
+  .cell-date .date-main{font-weight:600; color:var(--dark);}
+  .cell-date .date-time{font-size:12px; color:var(--muted); margin-left:4px;}
+  .btn-detail{
+    background:none;
+    border:1.5px solid #e4e8eb;
+    color:var(--muted);
+    font-family:'Dosis', sans-serif;
+    font-weight:700;
+    font-size:12.5px;
+    padding:6px 12px;
+    border-radius:7px;
+    cursor:pointer;
+    transition:border-color .15s, color .15s;
+  }
+  .btn-detail:hover{border-color:var(--teal-1); color:var(--teal-2);}
+
+  /* ---------- Cert banner ---------- */
   #cert-banner{
     margin-top:18px;
     padding:16px 18px;
@@ -281,16 +385,6 @@
     text-decoration:underline;
     word-break:break-word;
   }
-
-  #admin-table th, #admin-table td{
-    padding:8px 10px;
-    border-bottom:1px solid #eef1f2;
-    white-space:nowrap;
-  }
-  #admin-table th{color:var(--muted); font-weight:700; text-transform:uppercase; font-size:11.5px; letter-spacing:0.5px;}
-  #admin-table tr:hover td{background:#f7f9fa;}
-  .pill-aprobado{background:var(--success-bg); color:var(--success); padding:3px 10px; border-radius:20px; font-weight:700; font-size:12px;}
-  .pill-no-aprobado{background:var(--danger-bg); color:var(--danger); padding:3px 10px; border-radius:20px; font-weight:700; font-size:12px;}
 
   .review-item{
     border:1.5px solid #e4e8eb;
@@ -348,16 +442,46 @@
 
   <!-- ============ ADMIN: PANEL (viewer + admin) ============ -->
   <div class="screen" id="screen-admin-panel">
-    <div class="eyebrow">Panel interno</div>
-    <h1 class="page-title">Evaluaciones rendidas</h1>
-    <div class="card" style="overflow-x:auto;">
-      <div id="admin-status" style="margin-bottom:14px; color:var(--muted); font-size:14px;"></div>
-      <table id="admin-table" style="width:100%; border-collapse:collapse; font-size:13.5px; display:none;">
-        <thead>
-          <tr id="admin-table-head" style="text-align:left; border-bottom:2px solid #e4e8eb;"></tr>
-        </thead>
-        <tbody id="admin-table-body"></tbody>
-      </table>
+    <div class="admin-header">
+      <div>
+        <div class="eyebrow">Panel interno</div>
+        <h1 class="page-title">Evaluaciones rendidas</h1>
+        <p class="admin-subtitle">Consultá y gestioná las evaluaciones realizadas por los estudiantes.</p>
+      </div>
+      <button class="btn-refresh" id="btn-refresh-admin" type="button">
+        <span class="btn-refresh-icon">⟳</span> Actualizar
+      </button>
+    </div>
+
+    <div class="summary-cards" id="summary-cards" style="display:none;">
+      <div class="summary-card">
+        <div class="label">Total</div>
+        <div class="value" id="sc-total">—</div>
+      </div>
+      <div class="summary-card aprobados">
+        <div class="label">Aprobados</div>
+        <div class="value" id="sc-aprobados">—</div>
+      </div>
+      <div class="summary-card no-aprobados">
+        <div class="label">No aprobados</div>
+        <div class="value" id="sc-no-aprobados">—</div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Promedio</div>
+        <div class="value" id="sc-promedio">—</div>
+      </div>
+    </div>
+
+    <div class="card admin-table-card">
+      <div id="admin-status" class="admin-status"></div>
+      <div class="table-scroll">
+        <table id="admin-table" class="admin-table" style="display:none;">
+          <thead>
+            <tr id="admin-table-head"></tr>
+          </thead>
+          <tbody id="admin-table-body"></tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Solo visible si el rol es admin -->
@@ -381,6 +505,21 @@
       <div class="field-error" id="err-access" style="display:none;"></div>
 
       <div id="access-list"></div>
+    </div>
+
+    <!-- Solo visible si el rol es admin -->
+    <div class="card" id="pending-payments-card" style="display:none;">
+      <h2 style="font-size:19px; color:var(--dark); margin:0 0 14px;">Pendientes de habilitar 3er intento</h2>
+      <p style="font-size:13.5px; color:var(--muted); margin:0 0 14px;">Estudiantes que no aprobaron en 2 intentos. Marcá cuando confirmes el pago en Mercado Pago para habilitarles el 3er intento.</p>
+      <div id="pending-payments-list"></div>
+    </div>
+  </div>
+
+  <!-- ============ BLOQUEADO (sin intento disponible) ============ -->
+  <div class="screen" id="screen-blocked">
+    <div class="card center">
+      <h1 class="page-title" style="margin-bottom:14px;" id="blocked-title">Evaluación no disponible</h1>
+      <p id="blocked-message" style="font-size:16px; color:var(--text); line-height:1.6;"></p>
     </div>
   </div>
 
@@ -733,22 +872,27 @@ function renderAdminTable(rows){
   const table = document.getElementById('admin-table');
   const head = document.getElementById('admin-table-head');
   const body = document.getElementById('admin-table-body');
+  const summaryCards = document.getElementById('summary-cards');
 
   if(!rows || rows.length === 0){
     statusBox.innerText = 'Todavía no hay evaluaciones registradas.';
     table.style.display = 'none';
+    summaryCards.style.display = 'none';
     return;
   }
 
   statusBox.innerText = `${rows.length} evaluación(es) registrada(s).`;
   table.style.display = 'table';
 
-  // Encabezados: mostramos solo las columnas resumen, no las 20 preguntas (para no saturar)
-  const columnasResumen = ['Fecha','Nombre','Mail','Edición','Puntaje','Total','Resultado','Duración'];
-  head.innerHTML = columnasResumen.map(c => `<th>${escapeHtml(c)}</th>`).join('');
+  renderSummaryCards(rows);
 
-  body.innerHTML = rows.map(row => {
-    const celdas = columnasResumen.map(col => {
+  const columnasVisibles = ['Fecha','Nombre','Mail','Edición','Puntaje','Resultado','Duración'];
+  head.innerHTML = columnasVisibles.map(c =>
+    `<th${c==='Puntaje' || c==='Duración' ? ' class="cell-center"' : ''}>${escapeHtml(c)}</th>`
+  ).join('') + '<th class="cell-center">Acciones</th>';
+
+  body.innerHTML = rows.map((row, i) => {
+    const celdas = columnasVisibles.map(col => {
       if(col === 'Resultado'){
         const esAprobado = String(row[col]).toLowerCase().includes('aprobado') && !String(row[col]).toLowerCase().includes('no aprobado');
         const clase = esAprobado ? 'pill-aprobado' : 'pill-no-aprobado';
@@ -756,17 +900,74 @@ function renderAdminTable(rows){
       }
       if(col === 'Fecha'){
         const f = row[col] ? new Date(row[col]) : null;
-        const texto = f && !isNaN(f) ? f.toLocaleString('es-AR') : String(row[col] ?? '');
-        return `<td>${escapeHtml(texto)}</td>`;
+        if(f && !isNaN(f)){
+          const fechaTxt = f.toLocaleDateString('es-AR');
+          const horaTxt = f.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
+          return `<td class="cell-date"><span class="date-main">${escapeHtml(fechaTxt)}</span><span class="date-time">${escapeHtml(horaTxt)}</span></td>`;
+        }
+        return `<td>${escapeHtml(String(row[col] ?? ''))}</td>`;
+      }
+      if(col === 'Puntaje'){
+        const puntaje = parseFloat(String(row['Puntaje']).replace(',','.'));
+        const total = parseFloat(String(row['Total']).replace(',','.'));
+        const puntajeTxt = row['Puntaje'] ?? '';
+        const totalTxt = row['Total'] ?? '';
+        if(!isNaN(puntaje) && !isNaN(total) && total > 0){
+          const pct = Math.round((puntaje/total)*100);
+          return `<td class="cell-score"><div class="score-main">${escapeHtml(String(puntajeTxt))}/${escapeHtml(String(totalTxt))}</div><div class="score-pct">${pct}%</div></td>`;
+        }
+        return `<td class="cell-center">${escapeHtml(String(puntajeTxt))}</td>`;
+      }
+      if(col === 'Duración'){
+        return `<td class="cell-center">${escapeHtml(String(row[col] ?? ''))}</td>`;
       }
       return `<td>${escapeHtml(String(row[col] ?? ''))}</td>`;
     }).join('');
-    return `<tr>${celdas}</tr>`;
+    return `<tr>${celdas}<td class="cell-center"><button class="btn-detail" type="button" onclick="verDetalleEvaluacion(${i})">Ver detalle</button></td></tr>`;
   }).join('');
+
+  window._adminRowsCache = rows;
+}
+
+function verDetalleEvaluacion(index){
+  // Preparado para abrir el detalle completo (20 respuestas) más adelante.
+  // Por ahora no cambia ningún comportamiento existente.
+  console.log('Detalle de evaluación:', window._adminRowsCache ? window._adminRowsCache[index] : null);
+}
+
+function renderSummaryCards(rows){
+  const summaryCards = document.getElementById('summary-cards');
+  const total = rows.length;
+  let aprobados = 0;
+  let sumaPuntajes = 0;
+  let cantPuntajesValidos = 0;
+
+  rows.forEach(row => {
+    const resultadoTxt = String(row['Resultado'] || '').toLowerCase();
+    if(resultadoTxt.includes('aprobado') && !resultadoTxt.includes('no aprobado')) aprobados++;
+
+    const puntaje = parseFloat(String(row['Puntaje']).replace(',','.'));
+    if(!isNaN(puntaje)){
+      sumaPuntajes += puntaje;
+      cantPuntajesValidos++;
+    }
+  });
+
+  const noAprobados = total - aprobados;
+  const promedio = cantPuntajesValidos > 0 ? (sumaPuntajes / cantPuntajesValidos) : null;
+
+  document.getElementById('sc-total').innerText = total;
+  document.getElementById('sc-aprobados').innerText = aprobados;
+  document.getElementById('sc-no-aprobados').innerText = noAprobados;
+  document.getElementById('sc-promedio').innerText = promedio !== null
+    ? promedio.toLocaleString('es-AR', {minimumFractionDigits:1, maximumFractionDigits:1})
+    : '—';
+
+  summaryCards.style.display = 'grid';
 }
 
 function cargarPanelAdmin(){
-  fetch('/api/get-responses', {
+  return fetch('/api/get-responses', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ mail: currentAdminMail })
@@ -780,12 +981,70 @@ function cargarPanelAdmin(){
     renderAdminTable(data.rows);
     if(currentAdminRole === 'admin'){
       document.getElementById('access-manager-card').style.display = 'block';
+      document.getElementById('pending-payments-card').style.display = 'block';
       cargarListaAccesos();
+      cargarPendientesPago();
     }
   })
   .catch(err => {
     document.getElementById('admin-status').innerText = 'Error de conexión al traer los resultados.';
     console.error(err);
+  });
+}
+
+function cargarPendientesPago(){
+  fetch('/api/manage-payments', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requesterMail: currentAdminMail, action: 'listPending' })
+  })
+  .then(r => r.json())
+  .then(data => {
+    const box = document.getElementById('pending-payments-list');
+    if(!data.ok){
+      box.innerHTML = `<p style="color:var(--danger); font-size:14px;">Error: ${escapeHtml(data.error || '')}</p>`;
+      return;
+    }
+    if(!data.pendientes || data.pendientes.length === 0){
+      box.innerHTML = '<p style="color:var(--muted); font-size:14px;">No hay nadie esperando habilitación de 3er intento.</p>';
+      return;
+    }
+    box.innerHTML = data.pendientes.map(p => `
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eef1f2; flex-wrap:wrap; gap:8px;">
+        <div>
+          <span style="font-weight:600;">${escapeHtml(p.nombre)}</span>
+          <span style="color:var(--muted); font-size:13px;"> · ${escapeHtml(p.mail)} · Edición ${escapeHtml(String(p.edicion))} · ${p.intentosRendidos} intentos rendidos</span>
+        </div>
+        <button class="btn" style="width:auto; margin-top:0; padding:8px 16px; font-size:14px;" onclick="marcarPagoUI('${escapeHtml(p.mail)}','${escapeHtml(String(p.edicion))}', this)">Marcar como pagado</button>
+      </div>
+    `).join('');
+  })
+  .catch(err => console.error(err));
+}
+
+function marcarPagoUI(mail, edicion, btnEl){
+  if(!confirm(`¿Confirmás que ${mail} pagó el 3er intento?`)) return;
+  btnEl.disabled = true;
+  btnEl.innerText = 'Guardando...';
+  fetch('/api/manage-payments', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requesterMail: currentAdminMail, action: 'markPaid', mail, edicion })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if(!data.ok){
+      alert('Error: ' + data.error);
+      btnEl.disabled = false;
+      btnEl.innerText = 'Marcar como pagado';
+      return;
+    }
+    cargarPendientesPago();
+  })
+  .catch(err => {
+    console.error(err);
+    btnEl.disabled = false;
+    btnEl.innerText = 'Marcar como pagado';
   });
 }
 
@@ -836,6 +1095,17 @@ function quitarAccesoUI(mail){
   })
   .catch(err => console.error(err));
 }
+
+document.getElementById('btn-refresh-admin').addEventListener('click', function(){
+  const btn = this;
+  if(btn.disabled) return;
+  btn.disabled = true;
+  btn.classList.add('loading');
+  cargarPanelAdmin().finally(() => {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+  });
+});
 
 document.getElementById('btn-add-access').addEventListener('click', ()=>{
   const mail = document.getElementById('in-new-access-mail').value.trim();
@@ -895,12 +1165,11 @@ document.getElementById('btn-login').addEventListener('click', ()=>{
   })
   .then(r => r.json())
   .then(data => {
-    btn.disabled = false;
-    btn.innerText = textoOriginal;
-
     const role = data.ok ? data.role : null;
 
     if(role === 'admin' || role === 'viewer'){
+      btn.disabled = false;
+      btn.innerText = textoOriginal;
       currentAdminMail = mail;
       currentAdminRole = role;
       show('screen-admin-panel');
@@ -908,32 +1177,80 @@ document.getElementById('btn-login').addEventListener('click', ()=>{
       return;
     }
 
-    // Flujo normal de estudiante: ahora sí validamos nombre y edición
-    const okEdicion = /^\d+$/.test(edicion);
-    document.getElementById('err-nombre').style.display = nombre ? 'none' : 'block';
-    document.getElementById('err-edicion').style.display = okEdicion ? 'none' : 'block';
-    if(!nombre || !okEdicion) return;
+    procesarLoginEstudiante(nombre, mail, edicion, btn, textoOriginal);
+  })
+  .catch(err => {
+    console.error('Error chequeando acceso:', err);
+    procesarLoginEstudiante(nombre, mail, edicion, btn, textoOriginal);
+  });
+});
 
-    student = { nombre, mail, edicion };
+function procesarLoginEstudiante(nombre, mail, edicion, btn, textoOriginal){
+  const okEdicion = /^\d+$/.test(edicion);
+  document.getElementById('err-nombre').style.display = nombre ? 'none' : 'block';
+  document.getElementById('err-edicion').style.display = okEdicion ? 'none' : 'block';
+  if(!nombre || !okEdicion){
+    btn.disabled = false;
+    btn.innerText = textoOriginal;
+    return;
+  }
+
+  fetch('/api/check-eligibility', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mail, edicion })
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.disabled = false;
+    btn.innerText = textoOriginal;
+
+    const allowed = data.ok ? data.allowed : true;
+    const intentoActual = (data.ok && data.intento) ? data.intento : 1;
+
+    if(!allowed){
+      mostrarPantallaBloqueo(data.motivo, data.diasRestantes);
+      return;
+    }
+
+    student = { nombre, mail, edicion, intento: intentoActual };
     document.getElementById('intro-nombre').innerText = nombre.split(' ')[0];
     show('screen-intro');
   })
   .catch(err => {
-    // Si falla el chequeo de acceso, seguimos como estudiante normal
-    console.error('Error chequeando acceso:', err);
+    console.error('Error chequeando elegibilidad:', err);
     btn.disabled = false;
     btn.innerText = textoOriginal;
-
-    const okEdicion = /^\d+$/.test(edicion);
-    document.getElementById('err-nombre').style.display = nombre ? 'none' : 'block';
-    document.getElementById('err-edicion').style.display = okEdicion ? 'none' : 'block';
-    if(!nombre || !okEdicion) return;
-
-    student = { nombre, mail, edicion };
+    student = { nombre, mail, edicion, intento: 1 };
     document.getElementById('intro-nombre').innerText = nombre.split(' ')[0];
     show('screen-intro');
   });
-});
+}
+
+function mostrarPantallaBloqueo(motivo, diasRestantes){
+  const titleEl = document.getElementById('blocked-title');
+  const msgEl = document.getElementById('blocked-message');
+
+  if(motivo === 'aprobado_previo'){
+    titleEl.innerText = '¡Ya aprobaste esta evaluación!';
+    msgEl.innerText = 'Revisá tu mail para conocer los próximos pasos de tu proceso de certificación.';
+  } else if(motivo === 'esperar_dias'){
+    titleEl.innerText = 'Todavía no podés rendir de nuevo';
+    msgEl.innerText = `Para dar el siguiente intento tenés que esperar ${diasRestantes} día(s) más desde tu último intento. Cualquier consulta, escribinos a info@institutoilce.com.`;
+  } else if(motivo === 'requiere_pago'){
+    titleEl.innerText = 'Evaluación no disponible por el momento';
+    msgEl.innerText = 'Ya utilizaste tus 2 intentos gratuitos. Para habilitar un intento adicional, escribinos a info@institutoilce.com.';
+  } else if(motivo === 'sin_intentos'){
+    titleEl.innerText = 'Sin intentos disponibles';
+    msgEl.innerText = 'Ya utilizaste todos los intentos disponibles para esta evaluación. Escribinos a info@institutoilce.com para más información.';
+  } else {
+    titleEl.innerText = 'Evaluación no disponible';
+    msgEl.innerText = 'Por el momento no podés rendir esta evaluación. Escribinos a info@institutoilce.com para más información.';
+  }
+
+  show('screen-blocked');
+}
+
 
 /* =========================================================
    ARRANQUE DEL EXAMEN
@@ -1138,7 +1455,8 @@ function sendEmails(score, total, passed, duracionTexto, detalle){
       resultado: resultadoTexto,
       fecha: fecha,
       duracion: duracionTexto,
-      detalle: detalle
+      detalle: detalle,
+      intento: student.intento || 1
     })
   })
   .then(r => r.json())
