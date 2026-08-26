@@ -42,7 +42,8 @@
     align-items:center;
     padding:24px 16px 60px;
   }
-  .wrap{width:100%; max-width:720px;}
+  .wrap{width:100%; max-width:720px; transition:max-width .2s ease;}
+  .wrap.wrap-wide{max-width:1080px;}
 
   /* ---------- Header / Logo ---------- */
   .brand{
@@ -846,6 +847,7 @@ let submitted = false;
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  document.querySelector('.wrap').classList.toggle('wrap-wide', id === 'screen-admin-panel');
 }
 function shuffle(arr){
   const a = arr.slice();
@@ -886,9 +888,9 @@ function renderAdminTable(rows){
 
   renderSummaryCards(rows);
 
-  const columnasVisibles = ['Fecha','Nombre','Mail','Edición','Puntaje','Resultado','Duración'];
+  const columnasVisibles = ['Fecha','Nombre','Mail','Edición','Intento','Puntaje','Resultado','Duración'];
   head.innerHTML = columnasVisibles.map(c =>
-    `<th${c==='Puntaje' || c==='Duración' ? ' class="cell-center"' : ''}>${escapeHtml(c)}</th>`
+    `<th${c==='Puntaje' || c==='Duración' || c==='Intento' ? ' class="cell-center"' : ''}>${escapeHtml(c)}</th>`
   ).join('') + '<th class="cell-center">Acciones</th>';
 
   body.innerHTML = rows.map((row, i) => {
@@ -906,6 +908,10 @@ function renderAdminTable(rows){
           return `<td class="cell-date"><span class="date-main">${escapeHtml(fechaTxt)}</span><span class="date-time">${escapeHtml(horaTxt)}</span></td>`;
         }
         return `<td>${escapeHtml(String(row[col] ?? ''))}</td>`;
+      }
+      if(col === 'Intento'){
+        const intentoVal = row[col] ?? '1';
+        return `<td class="cell-center">${escapeHtml(String(intentoVal))}</td>`;
       }
       if(col === 'Puntaje'){
         const puntaje = parseFloat(String(row['Puntaje']).replace(',','.'));
