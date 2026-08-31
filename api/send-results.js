@@ -1,6 +1,12 @@
 const nodemailer = require('nodemailer');
 
-const STAFF_RECIPIENTS = ['info@institutoilce.com', 'sofia.salgueiro@institutoilce.com'];
+const STAFF_RECIPIENTS = [
+  'info@institutoilce.com',
+  'sofia.salgueiro@institutoilce.com',
+  'lourdes.barrantes@institutoilce.com',
+  'Victoria.Defilippe@institutoilce.com'
+];
+const FORM_DIPLOMA_URL = 'https://forms.gle/KM2Uxhisu74WndK49';
 
 function buildStudentEmail({ studentName, edicion, score, total, resultado, fecha }) {
   const primerNombre = (studentName || '').split(' ')[0];
@@ -17,7 +23,7 @@ Estado: ${resultado}
 Fecha: ${fecha}
 
 ${aprobado
-  ? 'En breve vas a recibir tu certificación por este mismo medio.'
+  ? `¡Felicitaciones! Aprobaste la evaluación. Recordá completar el Formulario de Solicitud de Diploma para dar inicio a tu proceso de certificación: ${FORM_DIPLOMA_URL}`
   : 'Por debajo del mínimo requerido para aprobar. Cualquier consulta, escribinos a info@institutoilce.com.'}
 
 ¡Gracias por tu dedicación!
@@ -47,7 +53,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const { studentName, studentEmail, edicion, score, total, resultado, fecha, duracion, detalle } = req.body || {};
+  const { studentName, studentEmail, edicion, score, total, resultado, fecha, duracion, detalle, intento } = req.body || {};
 
   if (!studentName || !studentEmail || !edicion || score === undefined) {
     res.status(400).json({ error: 'Faltan datos obligatorios' });
@@ -63,7 +69,7 @@ module.exports = async function handler(req, res) {
   });
 
   const fromHeader = `"Instituto ILCE" <${process.env.GMAIL_USER}>`;
-  const payload = { studentName, studentEmail, edicion, score, total, resultado, fecha, duracion };
+  const payload = { studentName, studentEmail, edicion, score, total, resultado, fecha, duracion, intento: intento || 1 };
 
   try {
     const studentMsg = buildStudentEmail(payload);
@@ -85,16 +91,21 @@ module.exports = async function handler(req, res) {
     }
 
     // Guardar el registro en Google Sheets (no bloquea la respuesta si falla)
+    console.log('GOOGLE_SHEETS_WEBHOOK_URL configurada:', !!process.env.GOOGLE_SHEETS_WEBHOOK_URL);
     if (process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
       try {
-        await fetch(process.env.GOOGLE_SHEETS_WEBHOOK_URL, {
+        const sheetsResponse = await fetch(process.env.GOOGLE_SHEETS_WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...payload, ...(detalle || {}) })
         });
+        const sheetsResult = await sheetsResponse.text();
+        console.log('Respuesta de Google Sheets:', sheetsResponse.status, sheetsResult);
       } catch (sheetsErr) {
-        console.error('Error guardando en Google Sheets:', sheetsErr);
+        console.error('Error guardando en Google Sheets:', sheetsErr.message);
       }
+    } else {
+      console.log('No se intentó guardar en Sheets: falta la variable de entorno.');
     }
 
     res.status(200).json({ ok: true });
