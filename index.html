@@ -344,7 +344,7 @@
 
   /* ---------- Panel interno: tabla ---------- */
   .admin-table-card{padding:22px; overflow:visible;}
-  .admin-status{margin-bottom:14px; color:var(--muted); font-size:14px;}
+  .admin-status{margin-bottom:14px; color:var(--muted); font-size:14px; white-space:nowrap; overflow-x:auto;}
   .table-scroll{max-height:560px; overflow-y:auto; overflow-x:auto; border-radius:10px;}
   .admin-table{width:100%; border-collapse:separate; border-spacing:0; font-size:13.5px;}
   .admin-table thead th{
@@ -389,6 +389,13 @@
     transition:border-color .15s, color .15s;
   }
   .btn-detail:hover{border-color:var(--teal-1); color:var(--teal-2);}
+
+  .btn-edit-icon{
+    background:none; border:none; cursor:pointer; font-size:12px;
+    opacity:0.5; transition:opacity .15s; padding:2px 4px; vertical-align:middle;
+  }
+  .btn-edit-icon:hover{opacity:1;}
+  .edit-cell-value{vertical-align:middle;}
 
   /* ---------- Cert banner ---------- */
   #cert-banner{
@@ -1000,6 +1007,13 @@ function renderAdminTable(rows){
         }
         return `<td>${escapeHtml(String(row[col] ?? ''))}</td>`;
       }
+      if(col === 'Edición'){
+        const edicionVal = row[col] ?? '';
+        if(currentAdminRole === 'admin' && row['_rowIndex']){
+          return `<td><span class="edit-cell-value" id="edicion-val-${i}">${escapeHtml(String(edicionVal))}</span> <button class="btn-edit-icon" type="button" title="Editar edición" onclick="editarEdicionUI(${i})">✏️</button></td>`;
+        }
+        return `<td>${escapeHtml(String(edicionVal))}</td>`;
+      }
       if(col === 'Intento'){
         const intentoVal = row[col] ?? '1';
         return `<td class="cell-center">${escapeHtml(String(intentoVal))}</td>`;
@@ -1024,6 +1038,45 @@ function renderAdminTable(rows){
   }).join('');
 
   window._adminRowsCache = rows;
+}
+
+function editarEdicionUI(index){
+  const row = window._adminRowsCache ? window._adminRowsCache[index] : null;
+  if(!row || !row['_rowIndex']) return;
+
+  const valorActual = row['Edición'] ?? '';
+  const nuevoValor = prompt('Nuevo valor para "Edición":', valorActual);
+  if(nuevoValor === null) return; // canceló
+  if(nuevoValor.trim() === '' || !/^\d+$/.test(nuevoValor.trim())){
+    alert('Ingresá solo números.');
+    return;
+  }
+  if(nuevoValor.trim() === String(valorActual)) return; // sin cambios
+
+  fetch('/api/update-record', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      requesterMail: currentAdminMail,
+      rowIndex: row['_rowIndex'],
+      field: 'Edición',
+      value: nuevoValor.trim()
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if(!data.ok){
+      alert('Error: ' + data.error);
+      return;
+    }
+    row['Edición'] = nuevoValor.trim();
+    const span = document.getElementById('edicion-val-' + index);
+    if(span) span.innerText = nuevoValor.trim();
+  })
+  .catch(err => {
+    console.error(err);
+    alert('Error de conexión al guardar el cambio.');
+  });
 }
 
 function verDetalleEvaluacion(index){
