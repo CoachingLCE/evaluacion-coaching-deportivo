@@ -439,6 +439,42 @@
   }
   .center{text-align:center;}
   .footer-note{text-align:center; color:var(--muted); font-size:13px; margin-top:18px;}
+
+  /* ---------- Modal de detalle de evaluación ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(1,35,63,0.55);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px; z-index:100;
+  }
+  .modal-box{
+    background:var(--card);
+    border-radius:16px;
+    max-width:640px;
+    width:100%;
+    max-height:85vh;
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 20px 60px rgba(1,35,63,0.3);
+  }
+  .modal-header{
+    display:flex; align-items:flex-start; justify-content:space-between;
+    padding:22px 24px 16px; border-bottom:1px solid #eef1f2; gap:12px;
+  }
+  .modal-title{font-size:19px; font-weight:800; color:var(--dark);}
+  .modal-subtitle{font-size:13.5px; color:var(--muted); margin-top:4px;}
+  .modal-close{
+    background:#f4f6f7; border:none; width:32px; height:32px; border-radius:50%;
+    color:var(--muted); font-size:15px; cursor:pointer; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .modal-close:hover{background:#e4e8eb; color:var(--dark);}
+  .modal-body{padding:20px 24px 24px; overflow-y:auto;}
+  .modal-summary{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px;}
+  .modal-summary .chip{background:#f4f6f7; border-radius:8px; padding:8px 12px; font-size:13px; color:var(--text);}
+  .modal-summary .chip b{color:var(--dark);}
+  .detail-q{border:1px solid #eef1f2; border-radius:10px; padding:12px 14px; margin-bottom:10px; font-size:13.5px;}
+  .detail-q .q-num{font-weight:700; color:var(--muted); font-size:12px; margin-bottom:4px;}
+  .detail-q .q-text{color:var(--text); line-height:1.5;}
 </style>
 </head>
 <body>
@@ -667,6 +703,20 @@
       <h1 class="page-title" style="margin-bottom:10px;">¡Listo!</h1>
       <p id="sent-message" style="font-size:16px; color:var(--text); line-height:1.6;"></p>
       <div class="footer-note">Instituto ILCE · Coaching deportivo</div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: DETALLE DE EVALUACIÓN (panel admin) ============ -->
+  <div class="modal-overlay" id="detail-modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="detail-modal-title"></div>
+          <div class="modal-subtitle" id="detail-modal-subtitle"></div>
+        </div>
+        <button class="modal-close" id="btn-close-detail" type="button" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="modal-body" id="detail-modal-body"></div>
     </div>
   </div>
 
@@ -977,10 +1027,51 @@ function renderAdminTable(rows){
 }
 
 function verDetalleEvaluacion(index){
-  // Preparado para abrir el detalle completo (20 respuestas) más adelante.
-  // Por ahora no cambia ningún comportamiento existente.
-  console.log('Detalle de evaluación:', window._adminRowsCache ? window._adminRowsCache[index] : null);
+  const row = window._adminRowsCache ? window._adminRowsCache[index] : null;
+  if(!row) return;
+
+  document.getElementById('detail-modal-title').innerText = row['Nombre'] || 'Estudiante';
+  document.getElementById('detail-modal-subtitle').innerText = `${row['Mail'] || ''} · Edición ${row['Edición'] || ''}`;
+
+  const esAprobado = String(row['Resultado'] || '').toLowerCase().includes('aprobado') && !String(row['Resultado'] || '').toLowerCase().includes('no aprobado');
+  const pillClase = esAprobado ? 'pill-aprobado' : 'pill-no-aprobado';
+
+  let chipsHtml = `
+    <div class="modal-summary">
+      <div class="chip">Puntaje: <b>${escapeHtml(String(row['Puntaje'] ?? ''))} / ${escapeHtml(String(row['Total'] ?? ''))}</b></div>
+      <div class="chip">Resultado: <span class="${pillClase}">${escapeHtml(String(row['Resultado'] ?? ''))}</span></div>
+      <div class="chip">Intento: <b>${escapeHtml(String(row['Intento'] ?? '1'))}</b></div>
+      <div class="chip">Duración: <b>${escapeHtml(String(row['Duración'] ?? ''))}</b></div>
+    </div>
+  `;
+
+  let preguntasHtml = '';
+  for(let i = 1; i <= 20; i++){
+    const valor = row['P' + i];
+    if(valor === undefined || valor === '') continue;
+    const esCorrecta = String(valor).toLowerCase().startsWith('correcta');
+    const esSinResponder = String(valor).toLowerCase().startsWith('sin responder');
+    const colorTexto = esCorrecta ? 'var(--success)' : (esSinResponder ? 'var(--muted)' : 'var(--danger)');
+    preguntasHtml += `
+      <div class="detail-q">
+        <div class="q-num">Pregunta ${i}</div>
+        <div class="q-text" style="color:${colorTexto};">${escapeHtml(String(valor))}</div>
+      </div>
+    `;
+  }
+
+  document.getElementById('detail-modal-body').innerHTML = chipsHtml + preguntasHtml;
+  document.getElementById('detail-modal-overlay').style.display = 'flex';
 }
+
+document.getElementById('btn-close-detail').addEventListener('click', () => {
+  document.getElementById('detail-modal-overlay').style.display = 'none';
+});
+document.getElementById('detail-modal-overlay').addEventListener('click', (e) => {
+  if(e.target.id === 'detail-modal-overlay'){
+    document.getElementById('detail-modal-overlay').style.display = 'none';
+  }
+});
 
 function renderSummaryCards(rows){
   const summaryCards = document.getElementById('summary-cards');
@@ -1281,6 +1372,8 @@ function procesarLoginEstudiante(nombre, mail, edicion, btn, textoOriginal){
   });
 }
 
+const DEPTO_ESTUDIANTES_TEXT = 'lourdes.barrantes@institutoilce.com o Victoria.Defilippe@institutoilce.com';
+
 function mostrarPantallaBloqueo(motivo, diasRestantes){
   const titleEl = document.getElementById('blocked-title');
   const msgEl = document.getElementById('blocked-message');
@@ -1290,16 +1383,16 @@ function mostrarPantallaBloqueo(motivo, diasRestantes){
     msgEl.innerText = 'Revisá tu mail para conocer los próximos pasos de tu proceso de certificación.';
   } else if(motivo === 'esperar_dias'){
     titleEl.innerText = 'Todavía no podés rendir de nuevo';
-    msgEl.innerText = `Para dar el siguiente intento tenés que esperar ${diasRestantes} día(s) más desde tu último intento. Cualquier consulta, escribinos a info@institutoilce.com.`;
+    msgEl.innerText = `Para dar el siguiente intento tenés que esperar ${diasRestantes} día(s) más desde tu último intento. Aprovechá este tiempo para repasar los contenidos de la formación. Cualquier consulta, escribinos al Depto. de Estudiantes: ${DEPTO_ESTUDIANTES_TEXT}.`;
   } else if(motivo === 'requiere_pago'){
     titleEl.innerText = 'Evaluación no disponible por el momento';
-    msgEl.innerText = 'Ya utilizaste tus 2 intentos gratuitos. Para habilitar un intento adicional, escribinos a info@institutoilce.com.';
+    msgEl.innerText = `Ya utilizaste tus 2 intentos gratuitos. Para habilitar un intento adicional, escribinos al Depto. de Estudiantes: ${DEPTO_ESTUDIANTES_TEXT}.`;
   } else if(motivo === 'sin_intentos'){
     titleEl.innerText = 'Sin intentos disponibles';
-    msgEl.innerText = 'Ya utilizaste todos los intentos disponibles para esta evaluación. Escribinos a info@institutoilce.com para más información.';
+    msgEl.innerText = `Ya utilizaste todos los intentos disponibles para esta evaluación. Escribinos al Depto. de Estudiantes para más información: ${DEPTO_ESTUDIANTES_TEXT}.`;
   } else {
     titleEl.innerText = 'Evaluación no disponible';
-    msgEl.innerText = 'Por el momento no podés rendir esta evaluación. Escribinos a info@institutoilce.com para más información.';
+    msgEl.innerText = `Por el momento no podés rendir esta evaluación. Escribinos al Depto. de Estudiantes para más información: ${DEPTO_ESTUDIANTES_TEXT}.`;
   }
 
   show('screen-blocked');
@@ -1494,7 +1587,7 @@ function sendEmails(score, total, passed, duracionTexto, detalle){
 
   const finalMsg = passed
     ? `Gracias por completar tu evaluación final, ${escapeHtml(student.nombre.split(' ')[0])}. ¡Aprobaste con ${scoreTexto} de ${total} puntos! Te enviamos un mail con el detalle.<br><br>Recordá completar el <b>Formulario de Solicitud de Diploma</b> para dar inicio a tu proceso de certificación:<br><a href="${FORM_DIPLOMA_URL}" target="_blank" rel="noopener" style="color:var(--teal-2); font-weight:700;">${FORM_DIPLOMA_URL}</a>`
-    : `Gracias por completar tu evaluación final, ${escapeHtml(student.nombre.split(' ')[0])}. Obtuviste ${scoreTexto} de ${total} puntos, por debajo del mínimo para aprobar. Te enviamos un mail con el detalle y los próximos pasos.`;
+    : `Gracias por completar tu evaluación final, ${escapeHtml(student.nombre.split(' ')[0])}. Obtuviste ${scoreTexto} de ${total} puntos, por debajo del mínimo para aprobar.<br><br>Te recomendamos repasar los contenidos de la formación antes de tu próximo intento (podés revisar el detalle de cada respuesta más abajo). Te enviamos un mail con el detalle y los próximos pasos.`;
   document.getElementById('sent-message').innerHTML = finalMsg;
 
   fetch(SEND_RESULTS_ENDPOINT, {
