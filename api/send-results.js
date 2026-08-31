@@ -8,6 +8,8 @@ const STAFF_RECIPIENTS = [
 ];
 const FORM_DIPLOMA_URL = 'https://forms.gle/KM2Uxhisu74WndK49';
 
+const DEPTO_ESTUDIANTES = 'lourdes.barrantes@institutoilce.com o Victoria.Defilippe@institutoilce.com';
+
 function buildStudentEmail({ studentName, edicion, score, total, resultado, fecha }) {
   const primerNombre = (studentName || '').split(' ')[0];
   const aprobado = resultado === 'Aprobado';
@@ -24,14 +26,14 @@ Fecha: ${fecha}
 
 ${aprobado
   ? `¡Felicitaciones! Aprobaste la evaluación. Recordá completar el Formulario de Solicitud de Diploma para dar inicio a tu proceso de certificación: ${FORM_DIPLOMA_URL}`
-  : 'Por debajo del mínimo requerido para aprobar. Cualquier consulta, escribinos a info@institutoilce.com.'}
+  : `Por debajo del mínimo requerido para aprobar. Te recomendamos repasar los contenidos de la formación antes de tu próximo intento. Cualquier consulta, escribinos al Depto. de Estudiantes: ${DEPTO_ESTUDIANTES}.`}
 
 ¡Gracias por tu dedicación!
 Instituto ILCE`
   };
 }
 
-function buildStaffEmail({ studentName, studentEmail, edicion, score, total, resultado, fecha, duracion }) {
+function buildStaffEmail({ studentName, studentEmail, edicion, score, total, resultado, fecha, duracion, intento }) {
   return {
     subject: `Resultado evaluación · ${studentName} · Coaching Deportivo`,
     text:
@@ -40,6 +42,7 @@ function buildStaffEmail({ studentName, studentEmail, edicion, score, total, res
 Estudiante: ${studentName}
 Mail: ${studentEmail}
 Edición: ${edicion}
+Intento N°: ${intento || 1}
 Resultado: ${score} de ${total} puntos
 Estado: ${resultado}
 Tiempo utilizado: ${duracion || 'no registrado'}
