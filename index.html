@@ -598,6 +598,13 @@
       <p style="font-size:13.5px; color:var(--muted); margin:0 0 14px;">Estudiantes que no aprobaron en 2 intentos. Marcá cuando confirmes el pago en Mercado Pago para habilitarles el 3er intento.</p>
       <div id="pending-payments-list"></div>
     </div>
+
+    <!-- Visible para admin y viewer: quién empezó la evaluación y no la terminó -->
+    <div class="card" id="progress-card" style="display:none;">
+      <h2 style="font-size:19px; color:var(--dark); margin:0 0 6px;">Evaluaciones sin terminar</h2>
+      <p style="font-size:13.5px; color:var(--muted); margin:0 0 14px;">Personas que abrieron la evaluación, cargaron sus datos o empezaron el examen y no llegaron al final. Se ve hasta dónde llegó cada una.</p>
+      <div id="progress-list"></div>
+    </div>
   </div>
 
   <!-- ============ BLOQUEADO (sin intento disponible) ============ -->
@@ -1170,6 +1177,8 @@ function cargarPanelAdmin(){
       return;
     }
     renderAdminTable(data.rows);
+    document.getElementById('progress-card').style.display = 'block';
+    cargarProgreso();
     if(currentAdminRole === 'admin'){
       document.getElementById('access-manager-card').style.display = 'block';
       document.getElementById('pending-payments-card').style.display = 'block';
@@ -1181,6 +1190,38 @@ function cargarPanelAdmin(){
     document.getElementById('admin-status').innerText = 'Error de conexión al traer los resultados.';
     console.error(err);
   });
+}
+
+const ETAPA_TEXTO = { datos: 'Escribió sus datos y no siguió', ingreso: 'Cargó sus datos y no empezó el examen', bloqueado: 'No pudo rendir (sin intento disponible)', examen: 'Dejó el examen a medias', terminado: 'Terminó' };
+function cargarProgreso(){
+  const box = document.getElementById('progress-list');
+  box.innerHTML = '<p style="color:var(--muted); font-size:14px;">Cargando</p>';
+  return fetch('/api/get-progreso', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mail: currentAdminMail }) })
+  .then(r => r.json())
+  .then(data => {
+    if(!data.ok){
+      box.innerHTML = `<p style="color:var(--muted); font-size:14px;">Todavía no disponible: ${escapeHtml(data.error || 'error')}</p>`;
+      return;
+    }
+    const ahora = Date.now();
+    const filas = (data.rows || []).filter(r => r.Etapa !== 'terminado').map(r => {
+      const ult = Date.parse(r.UltimaActividad) || 0; const minutos = ult ? Math.round((ahora - ult) / 60000) : null;
+      return Object.assign({}, r, { enCurso: minutos !== null && minutos < 20 && r.Etapa === 'examen', ult });
+    }).sort((a, b) => b.ult - a.ult).slice(0, 100);
+    if(!filas.length){ box.innerHTML = '<p style="color:var(--muted); font-size:14px;">No hay evaluaciones sin terminar.</p>'; return; }
+    box.innerHTML = filas.map(r => {
+      const donde = r.enCurso ? 'En este momento está rindiendo' : (ETAPA_TEXTO[r.Etapa] || escapeHtml(String(r.Etapa || '')));
+      const detalle = r.Etapa === 'examen' ? `  pregunta ${escapeHtml(String(r.PreguntaActual))} de ${escapeHtml(String(r.Total))}  ${escapeHtml(String(r.Respondidas))} respondidas` : (r.Etapa === 'bloqueado' && r.Motivo ? `  ${escapeHtml(String(r.Motivo))}` : '');
+      const cuando = r.ult ? new Date(r.ult).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+      return `<div class="fila-progreso" style="padding:10px 0; border-bottom:1px solid #eef1f2;">
+        <span style="font-weight:600;">${escapeHtml(String(r.Nombre || '(sin nombre)'))}</span>
+        <span style="color:var(--muted); font-size:13px;">  ${escapeHtml(String(r.Mail || ''))}  Edición ${escapeHtml(String(r.Edicion || ''))}  intento ${escapeHtml(String(r.Intento || 1))}</span><br>
+        <span style="font-size:13.5px; color:${r.enCurso ? 'var(--purple-2)' : 'var(--dark)'};">${donde}${detalle}</span>
+        <span style="color:var(--muted); font-size:13px;">  ${escapeHtml(cuando)}</span>
+      </div>`;
+    }).join('');
+  })
+  .catch(() => { box.innerHTML = '<p style="color:var(--muted); font-size:14px;">No se pudo traer la lista de evaluaciones sin terminar.</p>'; });
 }
 
 function cargarPendientesPago(){
@@ -1340,6 +1381,54 @@ document.getElementById('btn-add-access').addEventListener('click', ()=>{
 });
 
 /* =========================================================
+   REGISTRO DE PROGRESO
+   Avisa por dónde va la persona (datos cargados, bloqueada, en el examen y en qué pregunta, terminada) para que, si no termina, quede registrado.
+   Nunca frena ni cambia nada de lo que ve la persona: si falla, se ignora.
+========================================================= */
+const PROGRESO_ENDPOINT = '/api/registrar-progreso';
+const sesionId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('s' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
+let progresoVivo = null;      // último estado conocido, para mandarlo si la persona cierra la pestaña
+let ultimoEnviado = '';
+function armarProgreso(etapa, extra){
+  const base = Object.assign({}, (typeof student !== 'undefined' && student) ? student : {}, extra || {});
+  const enExamen = (etapa === 'examen' || etapa === 'terminado');
+  return {
+    sesionId, etapa, nombre: base.nombre || '', mail: base.mail || '', edicion: base.edicion || '', intento: base.intento || 1, motivo: base.motivo || '',
+    preguntaActual: enExamen ? Math.min(current + 1, QUESTIONS.length) : 0, respondidas: enExamen ? Object.keys(answers).length : 0, total: QUESTIONS.length,
+    segundosUsados: enExamen ? Math.max(0, EXAM_SECONDS - Math.max(0, secondsLeft)) : 0
+  };
+}
+function enviarProgreso(p){
+  const cuerpo = JSON.stringify(p);
+  // No repetir lo mismo: se compara lo que importa (no los segundos usados, que cambian solos).
+  const clave = JSON.stringify([p.sesionId, p.etapa, p.preguntaActual, p.respondidas, p.mail, p.nombre, p.edicion, p.intento, p.motivo]);
+  if(clave === ultimoEnviado) return;
+  ultimoEnviado = clave;
+  try {
+    if(navigator.sendBeacon && navigator.sendBeacon(PROGRESO_ENDPOINT, new Blob([cuerpo], { type: 'text/plain' }))) return;
+  } catch(e) { /* se intenta con fetch */ }
+  try { fetch(PROGRESO_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: cuerpo, keepalive: true }).catch(()=>{}); } catch(e) { /* nada */ }
+}
+function registrarProgreso(etapa, extra){
+  const p = armarProgreso(etapa, extra);
+  if(!p.mail) return;
+  progresoVivo = (etapa === 'terminado' || etapa === 'bloqueado') ? null : p;
+  enviarProgreso(p);
+}
+function actualizarProgresoVivo(){ if(progresoVivo && progresoVivo.etapa === 'examen') progresoVivo = armarProgreso('examen'); }
+// Si cierra la pestaña o se va: se manda lo último que se sabe. En la pantalla de ingreso, si ya escribió nombre y un mail válido pero no siguió, queda como "datos".
+function alSalir(){
+  if(progresoVivo){ enviarProgreso(armarProgreso(progresoVivo.etapa)); return; }
+  const login = document.getElementById('screen-login');
+  if(login && login.classList.contains('active')){
+    const nombre = (document.getElementById('in-nombre').value || '').trim(), mail = (document.getElementById('in-mail').value || '').trim();
+    if(nombre && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) enviarProgreso(armarProgreso('datos', { nombre, mail, edicion: (document.getElementById('in-edicion').value || '').trim() }));
+  }
+}
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'hidden') alSalir(); });
+window.addEventListener('pagehide', alSalir);
+
+/* =========================================================
    LOGIN
 ========================================================= */
 document.getElementById('btn-login').addEventListener('click', ()=>{
@@ -1407,11 +1496,13 @@ function procesarLoginEstudiante(nombre, mail, edicion, btn, textoOriginal){
     const intentoActual = (data.ok && data.intento) ? data.intento : 1;
 
     if(!allowed){
+      registrarProgreso('bloqueado', { nombre, mail, edicion, motivo: data.motivo || 'bloqueado' });
       mostrarPantallaBloqueo(data.motivo, data.diasRestantes);
       return;
     }
 
     student = { nombre, mail, edicion, intento: intentoActual };
+    registrarProgreso('ingreso');
     document.getElementById('intro-nombre').innerText = nombre.split(' ')[0];
     show('screen-intro');
   })
@@ -1420,6 +1511,7 @@ function procesarLoginEstudiante(nombre, mail, edicion, btn, textoOriginal){
     btn.disabled = false;
     btn.innerText = textoOriginal;
     student = { nombre, mail, edicion, intento: 1 };
+    registrarProgreso('ingreso');
     document.getElementById('intro-nombre').innerText = nombre.split(' ')[0];
     show('screen-intro');
   });
@@ -1464,6 +1556,7 @@ document.getElementById('btn-start').addEventListener('click', ()=>{
   show('screen-exam');
   renderQuestion();
   startTimer();
+  registrarProgreso('examen');
 });
 
 /* =========================================================
@@ -1521,6 +1614,7 @@ function renderQuestion(){
     div.innerHTML = `<input type="radio" name="opt" ${selected?'checked':''}> <span>${escapeHtml(op)}</span>`;
     div.addEventListener('click', ()=>{
       answers[qIndex] = i;
+      actualizarProgresoVivo();
       renderQuestion();
     });
     opsBox.appendChild(div);
@@ -1534,6 +1628,7 @@ function renderQuestion(){
 document.getElementById('btn-next').addEventListener('click', ()=>{
   if(current < QUESTIONS.length-1){
     current++;
+    registrarProgreso('examen');
     renderQuestion();
   } else {
     clearInterval(timerInterval);
@@ -1548,6 +1643,7 @@ function submitExam(){
   if(submitted) return;
   submitted = true;
   clearInterval(timerInterval);
+  registrarProgreso('terminado');
 
   let score = 0;
   QUESTIONS.forEach((q, i)=>{
